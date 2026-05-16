@@ -114,6 +114,35 @@
     }
     .icon-btn:hover { color: #EF4444; background: rgba(239,68,68,0.10); }
 
+    /* ── SKIP NAV ── */
+    .skip-link {
+      position: absolute; top: -100%; left: 1rem;
+      background: var(--blue-600); color: #fff;
+      padding: 0.5rem 1rem; border-radius: 0 0 8px 8px;
+      font-weight: 700; font-size: 0.875rem; text-decoration: none; z-index: 9999;
+    }
+    .skip-link:focus { top: 0; }
+
+    /* ── CLASS RESOURCE BUTTONS ON CARD ── */
+    .btn-slides {
+      background: transparent; border: 1.5px solid #0891B2; color: #0891B2;
+      border-radius: var(--radius-btn); padding: 0.38rem 0.85rem;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer; width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+      transition: background var(--transition), color var(--transition);
+      margin-top: 0.3rem; text-decoration: none;
+    }
+    .btn-slides:hover { background: #0891B2; color: #fff; }
+    .btn-print {
+      background: transparent; border: 1.5px solid #D97706; color: #D97706;
+      border-radius: var(--radius-btn); padding: 0.38rem 0.85rem;
+      font-size: 0.8rem; font-weight: 600; cursor: pointer; width: 100%;
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+      transition: background var(--transition), color var(--transition);
+      margin-top: 0.3rem; text-decoration: none;
+    }
+    .btn-print:hover { background: #D97706; color: #fff; }
+
     /* ── TOOLBAR ── */
     #toolbar {
       max-width: 1200px; margin: 1.5rem auto 0.5rem; padding: 0 1.5rem;
@@ -423,6 +452,7 @@
   </style>
 </head>
 <body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
 
   <header id="site-header">
     <div class="header-inner">
@@ -434,21 +464,21 @@
         </div>
       </div>
       <div class="header-actions">
-        <button id="dark-toggle" class="dark-toggle" title="Toggle dark mode">&#127769;</button>
-        <button id="study-guide-btn" class="btn btn-ghost">&#128218; Study Guide</button>
-        <button id="open-modal-btn" class="btn btn-primary">&#43; Add Bookmark</button>
+        <button id="dark-toggle" class="dark-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">&#127769;</button>
+<button id="study-guide-btn" class="btn btn-ghost" aria-label="Open Study Guide">&#128218; Study Guide</button>
+        <button id="open-modal-btn" class="btn btn-primary" aria-label="Add new bookmark">&#43; Add Bookmark</button>
       </div>
     </div>
   </header>
 
-  <main>
-    <section id="toolbar">
+  <main id="main-content">
+    <section id="toolbar" aria-label="Search and filter">
       <div>
         <div class="search-wrapper">
-          <span class="search-icon">&#128269;</span>
-          <input type="text" id="search-input" placeholder="Search chapters or categories&hellip;" autocomplete="off" />
+          <span class="search-icon" aria-hidden="true">&#128269;</span>
+          <input type="text" id="search-input" placeholder="Search chapters or categories&hellip;" autocomplete="off" aria-label="Search chapters, topics, and keywords" />
         </div>
-        <div id="bookmark-count"></div>
+        <div id="bookmark-count" aria-live="polite" aria-atomic="true"></div>
       </div>
       <div id="category-filters"></div>
     </section>
@@ -492,7 +522,7 @@
   </div>
 
   <!-- Game Modal -->
-  <div id="game-overlay" class="overlay hidden" role="dialog" aria-modal="true">
+  <div id="game-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="game-chapter-title">
     <div class="modal-box game-box">
 
       <!-- Intro -->
@@ -542,7 +572,7 @@
   </div>
 
   <!-- Chapter Notes Modal -->
-  <div id="notes-overlay" class="overlay hidden" role="dialog" aria-modal="true">
+  <div id="notes-overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-labelledby="notes-title">
     <div class="modal-box notes-box">
       <div class="modal-header">
         <div style="display:flex;align-items:center;gap:0.65rem;">
@@ -1218,7 +1248,16 @@
     }
     function saveToStorage() { localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks)); }
 
+    // ── CHAPTER RESOURCE LOOKUP (add more chapters as slides are created) ──
+    const SLIDES     = { "1": "ch1-slides.html" };
+    const PRINTABLES = { "1": "ch1-printables.html" };
+
     // ── HELPERS ──
+    function chapterOrder(b) {
+      if (!isGameUrl(b.url)) return 999;
+      const map = {"1":1,"2":2,"3":3,"4":4,"5":5,"6":6,"7":7,"8":8,"9":9,"10":10,"11":11,"12":12,"13":13,"14":14,"TG1":15,"TG2":16,"TG3":17};
+      return map[gameId(b.url)] ?? 998;
+    }
     function getCategories() {
       return ["All", ...[...new Set(bookmarks.map(b => b.category))].sort()];
     }
@@ -1320,8 +1359,30 @@
           const notesBtn = document.createElement("button");
           notesBtn.className = "btn-notes";
           notesBtn.innerHTML = "&#128221; Chapter Notes";
+          notesBtn.setAttribute("aria-label", "Open chapter notes for " + gameData.title);
           notesBtn.addEventListener("click", () => launchNotes(gid));
           card.appendChild(notesBtn);
+
+          if (SLIDES[gid]) {
+            const slidesLink = document.createElement("a");
+            slidesLink.className = "btn-slides";
+            slidesLink.href = SLIDES[gid];
+            slidesLink.target = "_blank";
+            slidesLink.rel = "noopener noreferrer";
+            slidesLink.innerHTML = "&#128202; Class Slides";
+            slidesLink.setAttribute("aria-label", "Open class slides for " + gameData.title);
+            card.appendChild(slidesLink);
+          }
+          if (PRINTABLES[gid]) {
+            const printLink = document.createElement("a");
+            printLink.className = "btn-print";
+            printLink.href = PRINTABLES[gid];
+            printLink.target = "_blank";
+            printLink.rel = "noopener noreferrer";
+            printLink.innerHTML = "&#128424; Print Materials";
+            printLink.setAttribute("aria-label", "Open printable materials for " + gameData.title);
+            card.appendChild(printLink);
+          }
         }
       } else {
         const link = document.createElement("a");
@@ -1345,7 +1406,11 @@
     function renderGrid() {
       const filtered = getFiltered();
       grid.innerHTML = "";
-      const sorted = filtered.slice().sort((a, b) => b.createdAt - a.createdAt);
+      const sorted = filtered.slice().sort((a, b) => {
+        const oa = chapterOrder(a), ob = chapterOrder(b);
+        if (oa !== ob) return oa - ob;
+        return b.createdAt - a.createdAt;
+      });
       if (sorted.length === 0) {
         emptyState.classList.remove("hidden");
         countEl.textContent = "";
