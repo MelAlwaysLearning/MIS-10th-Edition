@@ -1222,11 +1222,33 @@
     function getCategories() {
       return ["All", ...[...new Set(bookmarks.map(b => b.category))].sort()];
     }
+    function stripHtml(str) {
+      return str ? str.replace(/<[^>]+>/g, "") : "";
+    }
+    function getSearchableText(b) {
+      const parts = [b.title, b.category, b.notes || ""];
+      if (isGameUrl(b.url)) {
+        const gid = gameId(b.url);
+        const game = GAMES[gid];
+        const notes = NOTES[gid];
+        if (game) {
+          parts.push(game.title);
+          game.tips.forEach(t => parts.push(stripHtml(t)));
+          game.qs.forEach(item => { parts.push(item.q); item.o.forEach(o => parts.push(o)); });
+        }
+        if (notes) {
+          parts.push(notes.overview);
+          notes.concepts.forEach(c => parts.push(stripHtml(c)));
+          notes.terms.forEach(t => { parts.push(t.t); parts.push(t.d); });
+        }
+      }
+      return parts.join(" ").toLowerCase();
+    }
     function getFiltered() {
       const q = searchQuery.toLowerCase();
       return bookmarks.filter(b => {
         const mc = activeCategory === "All" || b.category === activeCategory;
-        const ms = !q || b.title.toLowerCase().includes(q) || b.category.toLowerCase().includes(q);
+        const ms = !q || getSearchableText(b).includes(q);
         return mc && ms;
       });
     }
