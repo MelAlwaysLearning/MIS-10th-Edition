@@ -198,7 +198,7 @@
       background: none; border: none; cursor: pointer; font-size: 0.9rem;
       color: var(--text-muted); padding: 0.2rem 0.28rem; border-radius: 5px;
       line-height: 1; transition: color var(--transition), background var(--transition);
-      display: flex; align-items: center;
+      display: none; align-items: center;
     }
     .card-edit:hover  { color: var(--blue-600); background: var(--blue-100); }
     .card-delete:hover { color: #EF4444; background: rgba(239,68,68,0.10); }
@@ -466,7 +466,7 @@
       <div class="header-actions">
         <button id="dark-toggle" class="dark-toggle" title="Toggle dark mode" aria-label="Toggle dark mode">&#127769;</button>
 <button id="study-guide-btn" class="btn btn-ghost" aria-label="Open Study Guide">&#128218; Study Guide</button>
-        <button id="open-modal-btn" class="btn btn-primary" aria-label="Add new bookmark">&#43; Add Bookmark</button>
+        <button id="open-modal-btn" class="btn btn-primary" aria-label="Add new bookmark" style="display:none">&#43; Add Bookmark</button>
       </div>
     </div>
   </header>
@@ -1249,8 +1249,8 @@
     function saveToStorage() { localStorage.setItem(STORAGE_KEY, JSON.stringify(bookmarks)); }
 
     // ── CHAPTER RESOURCE LOOKUP (add more chapters as slides are created) ──
-    const SLIDES     = { "1": "ch1-slides.html", "2": "ch2-slides.html", "3": "ch3-slides.html", "4": "ch4-slides.html", "5": "ch5-slides.html" };
-    const PRINTABLES = { "1": "ch1-printables.html", "2": "ch2-printables.html", "3": "ch3-printables.html", "4": "ch4-printables.html", "5": "ch5-printables.html" };
+    const SLIDES     = { "1": "ch1-slides.html", "2": "ch2-slides.html", "3": "ch3-slides.html", "4": "ch4-slides.html", "5": "ch5-slides.html", "6": "ch6-slides.html", "7": "ch7-slides.html" };
+    const PRINTABLES = { "1": "ch1-printables.html", "2": "ch2-printables.html", "3": "ch3-printables.html", "4": "ch4-printables.html", "5": "ch5-printables.html", "6": "ch6-printables.html", "7": "ch7-printables.html" };
 
     // ── HELPERS ──
     function chapterOrder(b) {
