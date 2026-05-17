@@ -335,12 +335,18 @@ header {
 <div class="board-tabs">
   <button class="btab active" onclick="switchBoard('w1',this)">Week 1 — Ch 1, 2, 3, 5</button>
   <button class="btab" onclick="switchBoard('w2',this)">Week 2 — Ch 4, 6, 7</button>
+  <button class="btab" onclick="switchBoard('ch4',this)">Ch 4 Only — Cybersecurity</button>
+  <button class="btab" onclick="switchBoard('ch6',this)">Ch 6 Only — Networks</button>
+  <button class="btab" onclick="switchBoard('ch7',this)">Ch 7 Only — E-Commerce</button>
 </div>
 <div class="board-sub" id="board-sub"></div>
 
 <!-- BOARDS -->
 <div id="board-w1" class="board"></div>
 <div id="board-w2" class="board hidden"></div>
+<div id="board-ch4" class="board hidden"></div>
+<div id="board-ch6" class="board hidden"></div>
+<div id="board-ch7" class="board hidden"></div>
 
 <!-- QUESTION OVERLAY -->
 <div class="overlay hidden" id="q-overlay">
@@ -476,6 +482,147 @@ const BOARDS = {
         { clue:"The Facebook Cambridge Analytica case violated these TWO pillars of IT ethics from Chapter 3.", ans:"Privacy AND Accuracy (or Privacy + Intellectual Property — accept Privacy + any second valid pillar)", dd:false }
       ]
     ]
+  },
+
+  ch4: {
+    title: "Chapter 4 — Cybersecurity",
+    cats: ["CIA TRIAD","ATTACK TYPES","SECURITY TOOLS","REAL SCENARIOS","NAME THAT THREAT"],
+    questions: [
+      // 200 pts
+      [
+        { clue:"The three letters CIA stand for Confidentiality, ___, and Availability.", ans:"Integrity", dd:false },
+        { clue:"A fake email appearing to be from 'your bank' asking you to click a link and verify your account.", ans:"Phishing", dd:false },
+        { clue:"A network device that monitors and controls incoming and outgoing network traffic based on security rules.", ans:"Firewall", dd:false },
+        { clue:"The MGM Resorts $100M hack: attackers found an employee on LinkedIn and called IT helpdesk pretending to be locked out. This attack type.", ans:"Social Engineering / Pretexting", dd:false },
+        { clue:"Software that secretly records your keystrokes and sends them to an attacker.", ans:"Keylogger", dd:false }
+      ],
+      // 400 pts
+      [
+        { clue:"Ransomware encrypts your files so you cannot access them. Which CIA pillar is primarily violated?", ans:"Availability — you cannot access your own system", dd:false },
+        { clue:"Self-replicating malware that spreads across networks without any user interaction.", ans:"Worm", dd:false },
+        { clue:"This single security control blocks 99.9% of automated account compromise attempts according to Microsoft research.", ans:"MFA — Multi-Factor Authentication", dd:false },
+        { clue:"Target's 2013 breach started when attackers accessed the network through this type of third-party vendor.", ans:"HVAC / supply chain vendor", dd:false },
+        { clue:"Malware that encrypts your files and demands payment — usually in cryptocurrency — for the decryption key.", ans:"Ransomware", dd:false }
+      ],
+      // 600 pts
+      [
+        { clue:"An attacker reads 1 million customer records but changes nothing and deletes nothing. Which single CIA pillar was violated?", ans:"Confidentiality ONLY — nothing was changed or blocked", dd:false },
+        { clue:"A highly personalized phishing attack targeting a SPECIFIC individual using their real name, employer, and recent activity.", ans:"Spear Phishing", dd:false },
+        { clue:"This security test involves hiring ethical hackers to find vulnerabilities before criminals do.", ans:"Penetration Testing", dd:true },
+        { clue:"The Colonial Pipeline attack succeeded because the compromised VPN login had no ___.", ans:"MFA — Multi-Factor Authentication", dd:false },
+        { clue:"An attacker follows an authorized employee through a secure door by pretending to carry something heavy.", ans:"Tailgating", dd:false }
+      ],
+      // 800 pts
+      [
+        { clue:"An attacker modifies a patient's blood type in a hospital database without being detected. Which CIA pillar?", ans:"Integrity — data was silently modified", dd:false },
+        { clue:"Malware that appears to be legitimate software but secretly opens a backdoor for attackers.", ans:"Trojan Horse", dd:false },
+        { clue:"The IT restoration plan nested inside the larger Business Continuity Plan — specifically covers restoring systems after a disaster.", ans:"DR — Disaster Recovery", dd:false },
+        { clue:"Change Healthcare's ransomware attack exposed 100 million patients. The root cause: no ___ on the VPN.", ans:"MFA — Multi-Factor Authentication", dd:true },
+        { clue:"Your device is secretly added to a network of thousands of compromised machines controlled remotely to launch attacks.", ans:"Botnet", dd:false }
+      ],
+      // 1000 pts
+      [
+        { clue:"A DDoS attack floods a server with fake traffic. Which CIA pillar does it violate — and which two does it NOT violate?", ans:"Availability violated. Confidentiality and Integrity are NOT violated — data is untouched.", dd:false },
+        { clue:"An attack that exploits a software vulnerability before the vendor even knows it exists — named for the zero days available to patch.", ans:"Zero-Day Exploit", dd:false },
+        { clue:"How fast an organization must restore IT systems after a disaster. Measured as ___, which stands for ___.", ans:"RTO — Recovery Time Objective", dd:false },
+        { clue:"The average time between an attacker entering a network and the breach being discovered — 9 months, expressed in days.", ans:"277 days", dd:false },
+        { clue:"An employee uses their own legitimate credentials to steal company data and sell it to a competitor. This threat type.", ans:"Insider Threat", dd:false }
+      ]
+    ]
+  },
+
+  ch6: {
+    title: "Chapter 6 — Networks & Communication",
+    cats: ["NETWORK BASICS","NETWORK TYPES","HARDWARE & PROTOCOLS","THE INTERNET","REAL WORLD"],
+    questions: [
+      // 200 pts
+      [
+        { clue:"The set of rules that govern how data is transmitted between devices on a network.", ans:"Protocol", dd:false },
+        { clue:"A network that spans a small area like a single office, floor, or building.", ans:"LAN — Local Area Network", dd:false },
+        { clue:"A device that connects multiple devices on a LOCAL network and forwards data only to the correct destination.", ans:"Switch", dd:false },
+        { clue:"The system that translates human-readable domain names like google.com into numeric IP addresses.", ans:"DNS — Domain Name System", dd:false },
+        { clue:"Your company connects its Miami and Chicago offices securely over the public internet using this.", ans:"VPN — Virtual Private Network", dd:false }
+      ],
+      // 400 pts
+      [
+        { clue:"This measures how much data can be transmitted over a network connection in a given time — measured in Mbps or Gbps.", ans:"Bandwidth", dd:false },
+        { clue:"A network that spans cities, countries, or continents — like the internet itself.", ans:"WAN — Wide Area Network", dd:false },
+        { clue:"A device that connects DIFFERENT networks together and routes traffic between them using IP addresses.", ans:"Router", dd:false },
+        { clue:"This OSI layer is where SSL/TLS encryption operates — between the Application and Transport layers.", ans:"Layer 6 — Presentation Layer", dd:false },
+        { clue:"The short-range wireless network connecting your Bluetooth earbuds to your phone — maximum range about 10 meters.", ans:"PAN — Personal Area Network", dd:false }
+      ],
+      // 600 pts
+      [
+        { clue:"Data travels across networks broken into small units called ___.", ans:"Packets", dd:false },
+        { clue:"FIU's internal HR and payroll system — accessible only to FIU employees, using the same TCP/IP technology as the internet.", ans:"Intranet", dd:false },
+        { clue:"This protocol automatically assigns IP addresses to devices when they join a network.", ans:"DHCP — Dynamic Host Configuration Protocol", dd:true },
+        { clue:"Netflix uses this type of global network to deliver video from servers physically close to the viewer — reducing buffering.", ans:"CDN — Content Delivery Network", dd:false },
+        { clue:"A hospital connects all medical devices and computers within the building using this type of network.", ans:"LAN — Local Area Network", dd:false }
+      ],
+      // 800 pts
+      [
+        { clue:"The unique hardware identifier burned into every network interface card — formatted as 6 pairs of hexadecimal digits.", ans:"MAC Address", dd:false },
+        { clue:"A private encrypted tunnel over the public internet used to let remote employees securely connect to the company network.", ans:"VPN — Virtual Private Network", dd:false },
+        { clue:"HTTP stands for this — and adding an S makes it secure by adding encryption via SSL/TLS.", ans:"HyperText Transfer Protocol / HTTPS", dd:false },
+        { clue:"This technology allows an entire home or office to share a single public IP address — all devices appear as one address to the outside world.", ans:"NAT — Network Address Translation", dd:true },
+        { clue:"EDI — Electronic Data Interchange — this decades-old technology still processes more dollar value than Amazon and PayPal combined. What is it used for?", ans:"Automated B2B data exchange in standardized formats between companies", dd:false }
+      ],
+      // 1000 pts
+      [
+        { clue:"This layered model divides network communication into 7 layers — and the mnemonic for all 7 layers from Layer 7 down to Layer 1.", ans:"OSI Model — All People Seem To Need Data Processing", dd:false },
+        { clue:"The wireless standard used in offices and homes — based on IEEE 802.11 — commonly called this.", ans:"Wi-Fi", dd:false },
+        { clue:"The foundation of the internet — two protocols that together define how data is addressed, routed, and delivered between networks.", ans:"TCP/IP", dd:false },
+        { clue:"This wireless generation promises speeds up to 20 Gbps, ultra-low latency, and supports millions of IoT devices per square kilometer.", ans:"5G", dd:false },
+        { clue:"The service that connects your home or office network to the global internet — provided by companies like Comcast, AT&T, and Verizon.", ans:"ISP — Internet Service Provider", dd:false }
+      ]
+    ]
+  },
+
+  ch7: {
+    title: "Chapter 7 — E-Commerce & Digital Markets",
+    cats: ["E-COMMERCE MODELS","DIGITAL MARKETS","ONLINE PAYMENTS","MARKETING & DATA","REAL WORLD"],
+    questions: [
+      // 200 pts
+      [
+        { clue:"Amazon selling a product directly to you — the end consumer — is this type of e-commerce.", ans:"B2C — Business to Consumer", dd:false },
+        { clue:"The ability for customers to instantly compare prices across dozens of sellers online is called price ___.", ans:"Transparency", dd:false },
+        { clue:"PayPal, Venmo, and Apple Pay are all examples of this type of online payment method.", ans:"Digital Wallet / E-Payment", dd:false },
+        { clue:"Showing ads to users who previously visited your website but did not buy — sometimes called 'following' the customer around the web.", ans:"Retargeting", dd:false },
+        { clue:"Shopify allows small businesses without technical expertise to do this.", ans:"Set up and run an online store", dd:false }
+      ],
+      // 400 pts
+      [
+        { clue:"A business buying bulk office supplies from a vendor's website is this e-commerce model.", ans:"B2B — Business to Business", dd:false },
+        { clue:"When a manufacturer sells directly to consumers online, cutting out the middleman retailer entirely.", ans:"Disintermediation", dd:false },
+        { clue:"70% of online shopping carts end this way — the #1 cause is unexpected shipping costs appearing at checkout.", ans:"Abandoned", dd:false },
+        { clue:"Optimizing your website's content and structure so it ranks higher in Google search results — without paying for ads.", ans:"SEO — Search Engine Optimization", dd:false },
+        { clue:"Amazon Prime's free shipping plus streaming bundle increases this key metric by making customers reluctant to switch.", ans:"Customer Retention / Switching Cost / CLV", dd:false }
+      ],
+      // 600 pts
+      [
+        { clue:"eBay and Craigslist allow individuals to buy and sell to each other — this e-commerce model.", ans:"C2C — Consumer to Consumer", dd:false },
+        { clue:"Amazon recommending products based on your past purchases and what similar customers bought uses this technology.", ans:"Collaborative Filtering / Recommendation Engine", dd:false },
+        { clue:"This security standard protects cardholder data during online transactions — any business that accepts cards must comply.", ans:"PCI DSS", dd:true },
+        { clue:"The percentage of website visitors who complete a desired action — like making a purchase or signing up.", ans:"Conversion Rate", dd:false },
+        { clue:"Warby Parker started as online-only and then opened physical showrooms. This hybrid approach is called ___.", ans:"Omnichannel / Clicks-and-Bricks", dd:false }
+      ],
+      // 800 pts
+      [
+        { clue:"The government offering online tax filing and permit applications to citizens is this e-commerce model.", ans:"G2C — Government to Consumer", dd:false },
+        { clue:"Network effects mean a platform becomes more valuable as more ___ join it — why Facebook and Uber are so hard to displace.", ans:"Users", dd:false },
+        { clue:"This technology replaces your real card number with a one-time-use token during online or mobile transactions.", ans:"Tokenization", dd:false },
+        { clue:"A company finds that customers who buy Product A and B are 8x more likely to buy Product C. This data mining technique.", ans:"Market Basket Analysis / Association Rules", dd:true },
+        { clue:"Nike cut out Foot Locker and sells directly on Nike.com — keeping the margin and collecting direct customer data. This e-commerce concept.", ans:"Disintermediation", dd:false }
+      ],
+      // 1000 pts
+      [
+        { clue:"All e-commerce is e-business — but not all e-business is e-commerce. Explain the difference.", ans:"E-business includes ALL digital processes (internal systems, supply chain, HR). E-commerce specifically requires a commercial transaction.", dd:false },
+        { clue:"The total revenue a customer generates over their entire relationship with a company — used to decide how much to spend acquiring them.", ans:"CLV — Customer Lifetime Value", dd:false },
+        { clue:"Bitcoin and Ethereum are examples of this type of decentralized digital currency.", ans:"Cryptocurrency", dd:false },
+        { clue:"Sending personalized emails and product recommendations based on a customer's browsing history is called ___ marketing.", ans:"Targeted / Personalized Marketing", dd:false },
+        { clue:"In 2021, Facebook rebranded to Meta, betting billions that the next e-commerce frontier would be this immersive digital world.", ans:"Metaverse", dd:false }
+      ]
+    ]
   }
 };
 
@@ -483,7 +630,7 @@ const BOARDS = {
 
 const state = {
   board: 'w1',
-  used: { w1: {}, w2: {} },
+  used: { w1: {}, w2: {}, ch4: {}, ch6: {}, ch7: {} },
   teams: [
     { name: 'Team 1', score: 0 },
     { name: 'Team 2', score: 0 },
@@ -541,6 +688,7 @@ function buildBoard(boardId) {
   const bd = BOARDS[boardId];
   const el = document.getElementById(`board-${boardId}`);
   el.innerHTML = '';
+  el.style.gridTemplateColumns = `repeat(${bd.cats.length}, 1fr)`;
 
   // Category headers
   bd.cats.forEach(c => {
@@ -675,7 +823,7 @@ function fmtScore(n) {
 // ── BOARD SWITCH ──────────────────────────────────────────────────────────────
 
 function switchBoard(id, btn) {
-  ['w1','w2'].forEach(b => {
+  ['w1','w2','ch4','ch6','ch7'].forEach(b => {
     document.getElementById(`board-${b}`).classList.toggle('hidden', b !== id);
   });
   document.querySelectorAll('.btab').forEach(t => t.classList.remove('active'));
@@ -694,19 +842,24 @@ function resetTiles() {
 
 function resetAll() {
   if (!confirm('Reset ALL boards AND all team scores?')) return;
-  state.used = { w1:{}, w2:{} };
+  state.used = { w1:{}, w2:{}, ch4:{}, ch6:{}, ch7:{} };
   state.teams.forEach((t,i) => { t.score = 0; });
-  buildBoard('w1');
-  buildBoard('w2');
+  ['w1','w2','ch4','ch6','ch7'].forEach(b => buildBoard(b));
   buildScoreboard();
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 
 buildScoreboard();
-buildBoard('w1');
-buildBoard('w2');
+['w1','w2','ch4','ch6','ch7'].forEach(b => buildBoard(b));
 document.getElementById('board-sub').textContent = BOARDS['w1'].title;
+
+// Deep-link: ?board=ch4 auto-switches to that board
+const _bp = new URLSearchParams(window.location.search).get('board');
+if (_bp && BOARDS[_bp]) {
+  const _btn = document.querySelector(`[onclick="switchBoard('${_bp}',this)"]`);
+  if (_btn) switchBoard(_bp, _btn);
+}
 </script>
 </body>
 </html>
