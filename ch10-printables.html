@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch 10 Printables — Student Handout &amp; Bingo | ISM3011</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Georgia, "Times New Roman", serif; background: #f0f9ff; color: #1E293B; }
+    .screen-nav { background: #1E293B; color: white; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .screen-nav h1 { font-size: 1rem; font-weight: 700; }
+    .screen-nav p { font-size: 0.8rem; color: #94A3B8; margin-top: 2px; }
+    .nav-btns { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .nav-btn { padding: 0.45rem 1rem; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; font-family: inherit; }
+    .btn-print { background: #0284C7; color: white; }
+    .btn-print:hover { background: #0369A1; }
+    .btn-back { background: transparent; border: 1px solid #475569; color: #94A3B8; }
+    .btn-back:hover { background: #334155; color: white; }
+    .print-preview { max-width: 860px; margin: 2rem auto; padding: 0 1rem 3rem; }
+    .page-label { font-family: -apple-system, sans-serif; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: #64748B; margin: 2rem 0 0.5rem; display: flex; align-items: center; gap: 0.6rem; }
+    .page-label::after { content: ''; flex: 1; height: 1px; background: #E2E8F0; }
+    .print-page { background: white; width: 100%; max-width: 780px; margin: 0 auto 1rem; padding: 0.7in 0.75in; border: 1px solid #E2E8F0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); min-height: 10.5in; }
+    .handout-header { border-bottom: 3px solid #0284C7; padding-bottom: 10px; margin-bottom: 18px; }
+    .handout-header h2 { font-size: 1.15rem; font-weight: 700; }
+    .handout-header .meta { font-size: 0.78rem; color: #475569; margin-top: 3px; }
+    .student-info { display: flex; gap: 2rem; margin-bottom: 18px; }
+    .info-field { flex: 1; }
+    .info-field label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #64748B; display: block; margin-bottom: 3px; }
+    .info-field .line { border-bottom: 1px solid #1E293B; height: 22px; }
+    .section-title { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #0369A1; margin: 18px 0 8px; border-left: 3px solid #0284C7; padding-left: 8px; }
+    p, li { font-size: 0.82rem; line-height: 1.55; }
+    .fill-blank { display: inline-block; border-bottom: 1px solid #1E293B; min-width: 100px; height: 16px; margin: 0 3px; }
+    .fill-blank-lg { display: block; border-bottom: 1px solid #1E293B; min-width: 100%; height: 16px; margin: 6px 0; }
+    .match-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin: 8px 0; }
+    .match-table th { background: #0284C7; color: white; padding: 5px 8px; text-align: left; }
+    .match-table td { border: 1px solid #CBD5E1; padding: 5px 8px; vertical-align: top; }
+    .match-table tr:nth-child(even) td { background: #F0F9FF; }
+    .terms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin: 8px 0; }
+    .term-entry .term-name { font-weight: 700; font-size: 0.8rem; color: #0369A1; }
+    .term-entry .term-line { border-bottom: 1px solid #CBD5E1; height: 14px; margin: 3px 0; }
+    .exit-ticket { border: 2px dashed #0284C7; border-radius: 10px; padding: 12px 14px; margin-top: 18px; }
+    .exit-ticket .et-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #0369A1; margin-bottom: 8px; }
+    .et-line { border-bottom: 1px solid #CBD5E1; height: 16px; margin: 6px 0; }
+    .bingo-header { text-align: center; margin-bottom: 10px; }
+    .bingo-header h2 { font-size: 1.2rem; font-weight: 800; }
+    .bingo-header .card-num { font-size: 0.8rem; color: #64748B; }
+    .bingo-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .bingo-table th { background: #0284C7; color: white; text-align: center; padding: 10px 4px; font-size: 1.2rem; font-weight: 800; border: 2px solid white; }
+    .bingo-table td { border: 2px solid #0284C7; text-align: center; padding: 5px 3px; font-size: 0.62rem; font-weight: 700; height: 1.3in; vertical-align: middle; line-height: 1.2; }
+    .bingo-table td.free { background: #DBEAFE; color: #1D4ED8; font-size: 0.75rem; font-weight: 800; }
+    .bingo-table tr:nth-child(odd) td { background: #F0F9FF; }
+    .bingo-table tr:nth-child(even) td { background: #E0F2FE; }
+    .bingo-table td.free { background: #DBEAFE !important; }
+    .call-list { columns: 2; column-gap: 1.5rem; margin: 8px 0; }
+    .call-item { font-size: 0.75rem; padding: 3px 0; border-bottom: 1px solid #E2E8F0; break-inside: avoid; }
+    .call-item .ci-term { font-weight: 700; color: #0369A1; }
+    .how-to-box { border: 1.5px solid #0284C7; border-radius: 8px; padding: 10px 12px; margin: 10px 0; font-size: 0.78rem; background: #F0F9FF; }
+    .how-to-box h3 { font-size: 0.82rem; font-weight: 700; margin-bottom: 6px; color: #0369A1; }
+    .how-to-box ol { padding-left: 1.2rem; }
+    .how-to-box li { margin-bottom: 4px; }
+    @media print {
+      .screen-nav { display: none; }
+      .print-preview { margin: 0; padding: 0; }
+      .page-label { display: none; }
+      .print-page { box-shadow: none; border: none; padding: 0.6in 0.7in; page-break-after: always; min-height: 0; margin: 0; }
+      .print-page:last-child { page-break-after: auto; }
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+<nav class="screen-nav">
+  <div>
+    <h1>Chapter 10 Printables — IS within the Organization</h1>
+    <p>ISM3011 | Print-ready student handout, key terms page, call list &amp; 4 Bingo cards</p>
+  </div>
+  <div class="nav-btns">
+    <button class="nav-btn btn-print" onclick="window.print()">🖨 Print All Pages</button>
+    <button class="nav-btn btn-back" onclick="window.location='index.html'">← Back to MIS Journey</button>
+  </div>
+</nav>
+
+<div class="print-preview">
+
+  <!-- PAGE 1 — STUDENT HANDOUT -->
+  <div class="page-label">Page 1 of 6 — Student Handout</div>
+  <div class="print-page" id="page1">
+    <div class="handout-header">
+      <h2>Chapter 10 Study Guide — Information Systems within the Organization</h2>
+      <div class="meta">ISM3011 | Introduction to Management of Information Systems</div>
+    </div>
+    <div class="student-info">
+      <div class="info-field"><label>Name</label><div class="line"></div></div>
+      <div class="info-field"><label>Date</label><div class="line"></div></div>
+      <div class="info-field"><label>Section</label><div class="line"></div></div>
+    </div>
+
+    <div class="section-title">Part 1 — IS Type Matching</div>
+    <p>Write the correct IS type next to each description: <strong>TPS · MIS · DSS · EIS · ERP</strong></p>
+    <p style="margin-top:8px;">_______ Handles routine, day-to-day business transactions like sales, payroll, and orders</p>
+    <p style="margin-top:4px;">_______ Provides reports and summaries to help middle managers make structured decisions</p>
+    <p style="margin-top:4px;">_______ Provides models and data analysis tools for complex, semi-structured decisions</p>
+    <p style="margin-top:4px;">_______ Designed for senior executives to monitor KPIs and strategic performance via dashboards</p>
+    <p style="margin-top:4px;">_______ Integrates ALL major business functions (finance, HR, SCM, sales) into one unified system</p>
+
+    <div class="section-title">Part 2 — Scenario Identification</div>
+    <p>Identify which IS type (TPS, MIS, DSS, EIS, ERP) is used in each scenario.</p>
+    <table class="match-table">
+      <thead><tr><th>Scenario</th><th>IS Type</th></tr></thead>
+      <tbody>
+        <tr><td>A cashier processes a customer sale — inventory updates and receipt prints automatically</td><td></td></tr>
+        <tr><td>A regional manager reviews a weekly report showing which stores are below their sales target</td><td></td></tr>
+        <tr><td>A CFO uses a tool to model three "what-if" scenarios for whether to acquire a competitor</td><td></td></tr>
+        <tr><td>The CEO checks a live dashboard showing global revenue, profit, and employee turnover rate</td><td></td></tr>
+        <tr><td>Walmart connects its purchasing, inventory, HR, and finance functions in one shared system</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Part 3 — Acronym Expansion</div>
+    <p>Write the full name for each acronym.</p>
+    <p style="margin-top:8px;">ERP: <span class="fill-blank" style="min-width:300px;"></span></p>
+    <p style="margin-top:6px;">TPS: <span class="fill-blank" style="min-width:300px;"></span></p>
+    <p style="margin-top:6px;">MIS: <span class="fill-blank" style="min-width:300px;"></span></p>
+    <p style="margin-top:6px;">DSS: <span class="fill-blank" style="min-width:300px;"></span></p>
+    <p style="margin-top:6px;">EIS: <span class="fill-blank" style="min-width:300px;"></span></p>
+    <p style="margin-top:6px;">KPI: <span class="fill-blank" style="min-width:300px;"></span></p>
+    <p style="margin-top:6px;">OLAP: <span class="fill-blank" style="min-width:280px;"></span></p>
+
+    <div class="section-title">Part 4 — Short Answer</div>
+    <p>Why did companies build ERP systems? What problem did they solve? (Hint: think about data silos.)</p>
+    <div class="fill-blank-lg"></div><div class="fill-blank-lg"></div>
+    <p style="margin-top:8px;">What is the difference between batch processing and real-time processing in a TPS? Give an example of each.</p>
+    <div class="fill-blank-lg"></div><div class="fill-blank-lg"></div>
+
+    <div class="exit-ticket">
+      <div class="et-title">🎟 Exit Ticket</div>
+      <p style="font-size:0.78rem;margin-bottom:6px;">Why did Hershey's 1999 ERP implementation fail, and what does it tell us about what's really hard about ERP projects? (Hint: the technology isn't the hardest part.)</p>
+      <div class="et-line"></div><div class="et-line"></div><div class="et-line"></div><div class="et-line"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 2 — KEY TERMS -->
+  <div class="page-label">Page 2 of 6 — Key Terms</div>
+  <div class="print-page" id="page2">
+    <div class="handout-header">
+      <h2>Chapter 10 — Key Terms &amp; IS Summary</h2>
+      <div class="meta">ISM3011 | Define each term in your own words</div>
+    </div>
+    <div class="section-title">Key Terms — Define in Your Own Words</div>
+    <div class="terms-grid">
+      <div class="term-entry"><div class="term-name">ERP (Enterprise Resource Planning)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">TPS (Transaction Processing System)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">MIS (Management Information System)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">DSS (Decision Support System)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">EIS (Executive Information System)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">KPI (Key Performance Indicator)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Business Intelligence (BI)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Data Warehouse</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Dashboard</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Information Silo</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Real-Time Processing</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Batch Processing</div><div class="term-line"></div><div class="term-line"></div></div>
+    </div>
+    <div class="section-title">IS Type Quick Reference — Fill in the Table</div>
+    <table class="match-table">
+      <thead><tr><th>IS Type</th><th>Primary User</th><th>Decision Type</th><th>Key Output</th></tr></thead>
+      <tbody>
+        <tr><td>TPS</td><td></td><td></td><td></td></tr>
+        <tr><td>MIS</td><td></td><td></td><td></td></tr>
+        <tr><td>DSS</td><td></td><td></td><td></td></tr>
+        <tr><td>EIS</td><td></td><td></td><td></td></tr>
+        <tr><td>ERP</td><td></td><td></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGE 3 — BINGO CALL LIST -->
+  <div class="page-label">Page 3 of 6 — Bingo Call List (Professor Use)</div>
+  <div class="print-page" id="page3">
+    <div class="handout-header">
+      <h2>Chapter 10 Bingo — Call List &amp; Instructions</h2>
+      <div class="meta">ISM3011 | Read the CLUE aloud — students must identify the term on their card</div>
+    </div>
+    <div class="how-to-box">
+      <h3>How to Play</h3>
+      <ol>
+        <li>Distribute one Bingo card (pages 4–6) to each student. Cards 1–4 have different layouts.</li>
+        <li>Read the <strong>clue</strong> aloud. Do NOT read the term in parentheses.</li>
+        <li>Students mark the matching term on their card using a pen, marker, or coin.</li>
+        <li>First student to get 5-in-a-row calls "BINGO!" Verify and award a prize.</li>
+      </ol>
+    </div>
+    <p style="font-size:0.78rem;margin-bottom:6px;"><em>★ Starred terms are quiz answers — they appear on EVERY card.</em></p>
+    <div class="section-title">Call List</div>
+    <div class="call-list">
+      <div class="call-item"><span class="ci-term">ERP ★</span> — "Enterprise Resource Planning — integrates ALL business functions into one unified system with a shared database"</div>
+      <div class="call-item"><span class="ci-term">TPS ★</span> — "Handles routine, day-to-day business transactions — sales, payroll, and orders processed at high speed"</div>
+      <div class="call-item"><span class="ci-term">MIS ★</span> — "Provides reports and summaries to support managerial decisions — takes TPS data and aggregates it"</div>
+      <div class="call-item"><span class="ci-term">DSS ★</span> — "Provides models and data analysis tools to help tackle complex, semi-structured decisions"</div>
+      <div class="call-item"><span class="ci-term">EIS ★</span> — "Designed for senior executives to monitor key performance indicators and strategic performance"</div>
+      <div class="call-item"><span class="ci-term">KPI</span> — "Key Performance Indicator — a measurable value showing how well an organization achieves its objectives"</div>
+      <div class="call-item"><span class="ci-term">Business Intelligence</span> — "Technologies and strategies for analyzing business data to support decision-making — Tableau, Power BI"</div>
+      <div class="call-item"><span class="ci-term">Data Warehouse</span> — "A central repository of integrated data from all IS sources — optimized for analysis, not transactions"</div>
+      <div class="call-item"><span class="ci-term">Dashboard</span> — "A visual display of key metrics and KPIs — the main output of an EIS for executive use"</div>
+      <div class="call-item"><span class="ci-term">Functional IS</span> — "An information system serving a specific business department — accounting IS, HR IS, marketing IS"</div>
+      <div class="call-item"><span class="ci-term">Silo</span> — "When information is trapped within one department and doesn't flow to others — the problem ERP solves"</div>
+      <div class="call-item"><span class="ci-term">Integration</span> — "Connecting separate IS so data flows seamlessly between departments — the core value of ERP"</div>
+      <div class="call-item"><span class="ci-term">Real-Time Processing</span> — "Each transaction is processed immediately as it occurs — ATM withdrawals update your balance instantly"</div>
+      <div class="call-item"><span class="ci-term">Batch Processing</span> — "Transactions are collected and processed in groups at a scheduled time — payroll runs every two weeks"</div>
+      <div class="call-item"><span class="ci-term">OLAP</span> — "Online Analytical Processing — enables multi-dimensional analysis and drill-down capability in BI tools"</div>
+      <div class="call-item"><span class="ci-term">SCM</span> — "Supply Chain Management — coordinates the flow of goods, information, and finances from suppliers to customers"</div>
+      <div class="call-item"><span class="ci-term">CRM</span> — "Customer Relationship Management — manages all customer interactions to build loyalty and maximize value"</div>
+      <div class="call-item"><span class="ci-term">HRM</span> — "Human Resource Management IS — handles employee lifecycle from recruitment to payroll to performance"</div>
+      <div class="call-item"><span class="ci-term">Accounting IS</span> — "Tracks financial transactions, manages accounts payable/receivable, produces financial statements"</div>
+      <div class="call-item"><span class="ci-term">Feedback Loop</span> — "When IS output becomes input for another IS — TPS data feeds MIS, MIS alerts feed DSS decisions"</div>
+      <div class="call-item"><span class="ci-term">Decision Support</span> — "IS that helps managers analyze complex problems — not automatic decisions, but tools to inform judgment"</div>
+      <div class="call-item"><span class="ci-term">Operational IS</span> — "IS supporting day-to-day operations at the lowest organizational level — includes TPS"</div>
+      <div class="call-item"><span class="ci-term">Strategic IS</span> — "IS that provides competitive advantage by supporting long-term strategic decisions — includes EIS"</div>
+      <div class="call-item"><span class="ci-term">Enterprise System</span> — "A large-scale IS spanning the entire organization — ERP is the prime example"</div>
+      <div class="call-item"><span class="ci-term">FREE SPACE</span> — "Everyone marks the center square!"</div>
+    </div>
+  </div>
+
+  <!-- PAGE 4 — BINGO CARD 1 -->
+  <div class="page-label">Page 4 of 6 — Bingo Card 1</div>
+  <div class="print-page" id="page4">
+    <div class="bingo-header">
+      <h2>Chapter 10 Bingo &nbsp;|&nbsp; ISM3011</h2>
+      <div class="card-num">Card 1 — IS within the Organization</div>
+    </div>
+    <table class="bingo-table" role="grid" aria-label="Bingo card 1">
+      <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
+      <tbody>
+        <tr><td>ERP</td><td>KPI</td><td>TPS</td><td>Business Intelligence</td><td>Data Warehouse</td></tr>
+        <tr><td>Dashboard</td><td>MIS</td><td>Functional IS</td><td>DSS</td><td>Silo</td></tr>
+        <tr><td>Integration</td><td>Real-Time Processing</td><td class="free">★<br>FREE<br>SPACE</td><td>EIS</td><td>Batch Processing</td></tr>
+        <tr><td>OLAP</td><td>SCM</td><td>CRM</td><td>HRM</td><td>Accounting IS</td></tr>
+        <tr><td>Feedback Loop</td><td>Decision Support</td><td>Operational IS</td><td>Strategic IS</td><td>Enterprise System</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGE 5 — BINGO CARD 2 -->
+  <div class="page-label">Page 5 of 6 — Bingo Card 2</div>
+  <div class="print-page" id="page5">
+    <div class="bingo-header">
+      <h2>Chapter 10 Bingo &nbsp;|&nbsp; ISM3011</h2>
+      <div class="card-num">Card 2 — IS within the Organization</div>
+    </div>
+    <table class="bingo-table" role="grid" aria-label="Bingo card 2">
+      <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
+      <tbody>
+        <tr><td>Enterprise System</td><td>DSS</td><td>Silo</td><td>ERP</td><td>Decision Support</td></tr>
+        <tr><td>Accounting IS</td><td>Data Warehouse</td><td>TPS</td><td>Feedback Loop</td><td>CRM</td></tr>
+        <tr><td>Strategic IS</td><td>OLAP</td><td class="free">★<br>FREE<br>SPACE</td><td>MIS</td><td>HRM</td></tr>
+        <tr><td>Operational IS</td><td>EIS</td><td>Integration</td><td>KPI</td><td>SCM</td></tr>
+        <tr><td>Batch Processing</td><td>Business Intelligence</td><td>Real-Time Processing</td><td>Dashboard</td><td>Functional IS</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGE 6 — BINGO CARDS 3 & 4 -->
+  <div class="page-label">Page 6 of 6 — Bingo Cards 3 &amp; 4</div>
+  <div class="print-page" id="page6">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3in;">
+      <div>
+        <div class="bingo-header">
+          <h2 style="font-size:0.95rem;">Chapter 10 Bingo | ISM3011</h2>
+          <div class="card-num">Card 3</div>
+        </div>
+        <table class="bingo-table" role="grid" aria-label="Bingo card 3" style="font-size:0.55rem;">
+          <thead><tr><th style="font-size:0.9rem;">B</th><th style="font-size:0.9rem;">I</th><th style="font-size:0.9rem;">N</th><th style="font-size:0.9rem;">G</th><th style="font-size:0.9rem;">O</th></tr></thead>
+          <tbody>
+            <tr><td>SCM</td><td>TPS</td><td>KPI</td><td>Operational IS</td><td>ERP</td></tr>
+            <tr><td>Batch Processing</td><td>Silo</td><td>EIS</td><td>Business Intelligence</td><td>Decision Support</td></tr>
+            <tr><td>HRM</td><td>Feedback Loop</td><td class="free" style="font-size:0.6rem;">★ FREE</td><td>MIS</td><td>OLAP</td></tr>
+            <tr><td>Accounting IS</td><td>CRM</td><td>DSS</td><td>Real-Time Processing</td><td>Dashboard</td></tr>
+            <tr><td>Integration</td><td>Enterprise System</td><td>Strategic IS</td><td>Functional IS</td><td>Data Warehouse</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="bingo-header">
+          <h2 style="font-size:0.95rem;">Chapter 10 Bingo | ISM3011</h2>
+          <div class="card-num">Card 4</div>
+        </div>
+        <table class="bingo-table" role="grid" aria-label="Bingo card 4" style="font-size:0.55rem;">
+          <thead><tr><th style="font-size:0.9rem;">B</th><th style="font-size:0.9rem;">I</th><th style="font-size:0.9rem;">N</th><th style="font-size:0.9rem;">G</th><th style="font-size:0.9rem;">O</th></tr></thead>
+          <tbody>
+            <tr><td>Dashboard</td><td>MIS</td><td>ERP</td><td>Feedback Loop</td><td>Batch Processing</td></tr>
+            <tr><td>Strategic IS</td><td>Integration</td><td>DSS</td><td>Silo</td><td>TPS</td></tr>
+            <tr><td>Enterprise System</td><td>Data Warehouse</td><td class="free" style="font-size:0.6rem;">★ FREE</td><td>EIS</td><td>CRM</td></tr>
+            <tr><td>KPI</td><td>Real-Time Processing</td><td>HRM</td><td>Business Intelligence</td><td>SCM</td></tr>
+            <tr><td>Functional IS</td><td>Accounting IS</td><td>Operational IS</td><td>Decision Support</td><td>OLAP</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

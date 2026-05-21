@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 11: CRM &amp; Supply Chain Management — ISM3011 Slides</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --accent: #0284C7; --accent2: #0369A1; --dark: #0F172A; --card-bg: #1E293B; --muted: #94A3B8; --white: #F8FAFC; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--dark); color: var(--white); height: 100vh; overflow: hidden; }
+    #progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--accent); transition: width 0.4s ease; z-index: 200; }
+    #slide-counter { position: fixed; top: 12px; right: 16px; z-index: 200; font-size: 0.78rem; color: var(--muted); font-weight: 600; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 20px; }
+    #scoreboard { position: fixed; top: 12px; left: 16px; z-index: 200; background: rgba(15,23,42,0.85); border: 1px solid #334155; border-radius: 12px; padding: 10px 14px; min-width: 160px; display: none; }
+    #scoreboard h3 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 6px; }
+    .score-row { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; }
+    .score-val { font-weight: 800; color: var(--accent); font-size: 0.9rem; }
+    .score-btn { background: none; border: none; cursor: pointer; font-size: 0.9rem; padding: 0 2px; }
+    #controls { position: fixed; bottom: 16px; right: 16px; z-index: 200; display: flex; gap: 8px; align-items: center; }
+    .ctrl-btn { background: rgba(30,41,59,0.9); border: 1px solid #334155; color: var(--white); padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .ctrl-btn:hover { background: var(--accent); border-color: var(--accent); }
+    .ctrl-btn:disabled { opacity: 0.35; cursor: default; }
+    #slides-wrap { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+    .slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 3rem 5vw 4rem; opacity: 0; transform: translateX(60px); transition: opacity 0.4s ease, transform 0.4s ease; pointer-events: none; }
+    .slide.active { opacity: 1; transform: translateX(0); pointer-events: all; }
+    .slide.exit { opacity: 0; transform: translateX(-60px); }
+    .slide-eyebrow { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); font-weight: 700; margin-bottom: 0.6rem; text-align: center; }
+    .slide-title { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; text-align: center; line-height: 1.15; margin-bottom: 1rem; }
+    .slide-sub { font-size: clamp(0.9rem, 2vw, 1.15rem); color: var(--muted); text-align: center; max-width: 700px; line-height: 1.55; }
+    .accent-line { width: 60px; height: 4px; background: var(--accent); border-radius: 2px; margin: 0.8rem auto 1.2rem; }
+    .cards-row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1.2rem; width: 100%; max-width: 1000px; }
+    .flip-card { background: var(--card-bg); border: 1px solid #334155; border-radius: 14px; padding: 1.2rem 1.4rem; cursor: pointer; transition: all 0.25s; min-width: 170px; max-width: 220px; flex: 1; text-align: center; }
+    .flip-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .flip-card.revealed { border-color: var(--accent); background: rgba(2,132,199,0.12); }
+    .flip-card .card-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .flip-card .card-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+    .flip-card .card-body { font-size: 0.85rem; margin-top: 0.4rem; line-height: 1.45; display: none; }
+    .flip-card.revealed .card-body { display: block; }
+    .flip-card .card-hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.6rem; }
+    .flip-card.revealed .card-hint { display: none; }
+    .stats-row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; width: 100%; max-width: 860px; }
+    .stat-box { background: var(--card-bg); border: 1px solid #334155; border-radius: 12px; padding: 1rem 1.4rem; text-align: center; flex: 1; min-width: 160px; max-width: 220px; }
+    .stat-num { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; color: var(--accent); }
+    .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 4px; line-height: 1.35; }
+    .scenario-cards { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1.2rem; max-width: 960px; }
+    .scenario-card { background: var(--card-bg); border: 1px solid #334155; border-radius: 14px; padding: 1.2rem 1.4rem; flex: 1; min-width: 200px; max-width: 280px; cursor: pointer; transition: all 0.25s; }
+    .scenario-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .scenario-card.revealed { border-color: var(--accent); }
+    .scenario-card .sc-num { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); }
+    .scenario-card .sc-q { font-size: 0.88rem; margin-top: 0.4rem; line-height: 1.45; font-weight: 600; }
+    .scenario-card .sc-a { font-size: 0.82rem; color: #7DD3FC; margin-top: 0.5rem; display: none; }
+    .scenario-card.revealed .sc-a { display: block; }
+    .scenario-card .sc-hint { font-size: 0.7rem; color: var(--muted); margin-top: 0.4rem; }
+    .scenario-card.revealed .sc-hint { display: none; }
+    .compare-wrap { width: 100%; max-width: 820px; margin-top: 1rem; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .compare-table th { background: var(--accent); color: white; padding: 8px 14px; text-align: left; }
+    .compare-table td { border-bottom: 1px solid #334155; padding: 8px 14px; vertical-align: top; }
+    .compare-table tr:nth-child(odd) td { background: rgba(2,132,199,0.08); }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+    .badge-sky { background: rgba(2,132,199,0.2); color: #7DD3FC; }
+    .badge-amber { background: rgba(217,119,6,0.2); color: #FCD34D; }
+    .badge-red { background: rgba(220,38,38,0.2); color: #FCA5A5; }
+    .takeaway-list { list-style: none; max-width: 760px; width: 100%; margin-top: 1rem; }
+    .takeaway-list li { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; margin-bottom: 0.6rem; font-size: clamp(0.82rem, 1.6vw, 0.98rem); line-height: 1.45; opacity: 0; transform: translateX(20px); transition: opacity 0.35s, transform 0.35s; }
+    .takeaway-list li.show { opacity: 1; transform: translateX(0); }
+    .timer-wrap { margin-top: 1.2rem; text-align: center; }
+    .timer-display { font-size: 2.5rem; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1; }
+    .timer-btn { margin-top: 0.6rem; background: var(--accent); color: white; border: none; padding: 10px 28px; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
+    .timer-btn:hover { background: var(--accent2); }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar" style="width:8.33%;" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="12"></div>
+<div id="slide-counter" aria-live="polite">1 / 12</div>
+
+<div id="scoreboard" aria-label="Team scoreboard">
+  <h3>🏆 Scoreboard</h3>
+  <div class="score-row"><span>🔴 Team Red</span><div style="display:flex;align-items:center;gap:4px;"><button class="score-btn" onclick="adj('r',-1)">−</button><span class="score-val" id="sc-r">0</span><button class="score-btn" onclick="adj('r',1)">+</button></div></div>
+  <div class="score-row"><span>🔵 Team Blue</span><div style="display:flex;align-items:center;gap:4px;"><button class="score-btn" onclick="adj('b',-1)">−</button><span class="score-val" id="sc-b">0</span><button class="score-btn" onclick="adj('b',1)">+</button></div></div>
+  <div class="score-row"><span>🟢 Team Green</span><div style="display:flex;align-items:center;gap:4px;"><button class="score-btn" onclick="adj('g',-1)">−</button><span class="score-val" id="sc-g">0</span><button class="score-btn" onclick="adj('g',1)">+</button></div></div>
+</div>
+
+<div id="slides-wrap" aria-live="polite" aria-atomic="true">
+
+  <!-- SLIDE 1 — HOOK -->
+  <section class="slide active" id="s1" aria-label="Slide 1 of 12">
+    <div class="slide-eyebrow">Chapter 11 · Hook</div>
+    <div class="slide-title">The Customer Who Never Feels Like a Number</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Amazon knows your birthday, your pet's name, and that you buy protein powder every 30 days. Starbucks knows your order before you say a word. This isn't magic — it's CRM. And behind every product you hold, a supply chain made it possible.</div>
+    <div class="stats-row" style="margin-top:1.4rem;">
+      <div class="stat-box"><div class="stat-num">$91B</div><div class="stat-label">Global CRM market in 2024 — the largest enterprise software category, surpassing ERP</div></div>
+      <div class="stat-box"><div class="stat-num">$9.5T</div><div class="stat-label">Value of goods traded globally in supply chains annually — every product you own crossed multiple supply chains</div></div>
+      <div class="stat-box"><div class="stat-num">5×</div><div class="stat-label">It costs 5× more to acquire a new customer than to retain an existing one — CRM exists for this reason</div></div>
+      <div class="stat-box"><div class="stat-num">35%</div><div class="stat-label">Of Amazon's total revenue comes from personalized recommendations — CRM's highest-ROI feature</div></div>
+    </div>
+    <div class="timer-wrap" style="margin-top:1rem;">
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:4px;">Partner activity — 60 sec: Think of a brand that "knows you" — what do they do that makes you feel like a loyal customer? Name 3 specific things.</div>
+      <div class="timer-display" id="t1">1:00</div>
+      <button class="timer-btn" onclick="startTimer('t1',60)">▶ Start Timer</button>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 — CRM OVERVIEW -->
+  <section class="slide" id="s2" aria-label="Slide 2 of 12">
+    <div class="slide-eyebrow">Chapter 11 · CRM</div>
+    <div class="slide-title">Customer Relationship Management</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">CRM is the strategy AND the technology for managing every interaction with customers across the entire relationship lifecycle. Click each to explore the core concepts.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🤝</div>
+        <div class="card-label">What CRM Is</div>
+        <div class="card-body"><strong>Customer Relationship Management</strong> — managing ALL interactions with customers to build loyalty and maximize value. CRM is both a business strategy and a software platform. The strategy: treat every customer as an individual with personalized service. The software: Salesforce, HubSpot, Microsoft Dynamics CRM — systems that track every customer touchpoint (email, call, purchase, complaint, support ticket).</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🎯</div>
+        <div class="card-label">CRM in Action</div>
+        <div class="card-body"><strong>Key example: personalizing email offers based on purchase history.</strong> This IS CRM. <br><br>A retailer sees you bought running shoes last month → sends you a personalized email with compression socks and fitness tracker recommendations → you buy. <br><br>Other CRM examples: loyalty programs (Starbucks Stars), birthday discounts, automated follow-up after a support call, proactive outreach when a subscription is about to expire. <strong>Everything that makes customers feel "known."</strong></div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">📊</div>
+        <div class="card-label">CRM Goals</div>
+        <div class="card-body">
+          <strong>1. Customer retention</strong> — keep existing customers (costs 5× less than acquiring new ones)<br><br>
+          <strong>2. Upselling</strong> — sell a higher-tier product (iPhone 15 → iPhone 15 Pro)<br><br>
+          <strong>3. Cross-selling</strong> — sell related products (laptop → laptop bag + mouse)<br><br>
+          <strong>4. Reduce churn</strong> — identify customers likely to leave and intervene<br><br>
+          <strong>5. Increase CLV</strong> — maximize total lifetime revenue per customer
+        </div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">⚠️</div>
+        <div class="card-label">What CRM Is NOT</div>
+        <div class="card-body">Common exam traps — these are NOT examples of CRM:<br><br>✗ A company <strong>orders raw materials</strong> from a supplier (that's supply chain)<br>✗ A manufacturer <strong>ships to a distributor</strong> (that's logistics/SCM)<br>✗ An employee <strong>submits an expense report</strong> (that's accounting/ERP)<br><br><strong>CRM = actions directed at customers</strong> to build loyalty and generate revenue. If the action isn't customer-facing, it's not CRM.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 — CLV & CUSTOMER METRICS -->
+  <section class="slide" id="s3" aria-label="Slide 3 of 12">
+    <div class="slide-eyebrow">Chapter 11 · Customer Value</div>
+    <div class="slide-title">Customer Lifetime Value &amp; Key CRM Metrics</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">CRM is driven by data. Click each metric to understand how companies measure and maximize customer value — these are the numbers that drive every CRM decision.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:280px;">
+        <div class="card-icon">💰</div>
+        <div class="card-label">CLV — Customer Lifetime Value</div>
+        <div class="card-body"><strong>Total revenue a customer generates over their entire relationship with a company.</strong> <br><br>CLV formula (simplified): Average Purchase Value × Purchase Frequency × Customer Lifespan. <br><br>Starbucks CLV: average customer visits 2× week, spends $7, for 20 years → CLV ≈ $14,560. <br><br>Why it matters: if CLV is $14,560, spending $500 in marketing to acquire that customer is an excellent investment. CLV tells you how much to spend on acquisition and retention.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:280px;">
+        <div class="card-icon">📉</div>
+        <div class="card-label">Churn Rate</div>
+        <div class="card-body"><strong>The percentage of customers who stop doing business with a company in a given period.</strong> <br><br>If you start the year with 1,000 customers and end with 900, your annual churn rate is 10%. <br><br>Netflix's churn rate is ~2% monthly — they fight this by releasing new shows constantly. <strong>Even a 1% reduction in churn can add millions to revenue</strong> for large companies. CRM systems predict which customers are flight risks so companies can intervene before they leave.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:280px;">
+        <div class="card-icon">🎯</div>
+        <div class="card-label">Customer Segmentation</div>
+        <div class="card-body"><strong>Dividing customers into groups based on shared characteristics</strong> to deliver more relevant, personalized experiences. <br><br>Segments: by demographics (age, location), behavior (purchase frequency, categories), value (high-CLV vs. low-CLV), engagement (active vs. at-risk). <br><br>A bank sends different emails to new account holders (onboarding tips) vs. 10-year customers (investment product offers). <strong>Segmentation is the engine of personalization.</strong></div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+    <div style="margin-top:1rem;text-align:center;">
+      <span class="badge badge-red">Exam Alert</span>
+      <span style="font-size:0.82rem;color:var(--muted);margin-left:8px;">CLV = <strong>total revenue a customer generates over their entire relationship with a company</strong>. Not how long they've been alive. Not their average purchase. The TOTAL lifetime revenue figure.</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 — SCM OVERVIEW -->
+  <section class="slide" id="s4" aria-label="Slide 4 of 12">
+    <div class="slide-eyebrow">Chapter 11 · SCM</div>
+    <div class="slide-title">Supply Chain Management</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Before a product reaches you, it touched dozens of companies, countries, and systems. SCM coordinates all of it. Click each to understand the supply chain structure and why it matters.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🔗</div>
+        <div class="card-label">What is SCM?</div>
+        <div class="card-body"><strong>Supply Chain Management</strong> = coordinating the flow of goods, information, and finances from raw materials to the end customer — efficiently and cost-effectively. <br><br>The supply chain for your iPhone: mines in Congo (cobalt) → factories in China (assembly) → ships across the Pacific → US ports → distribution centers → Apple Store → you. <br><br><strong>SCM manages all of this</strong> — procurement, production, logistics, distribution, returns — as one integrated system.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🏭</div>
+        <div class="card-label">Supply Chain Structure</div>
+        <div class="card-body"><strong>Upstream:</strong> suppliers of raw materials (steel, silicon, fabric)<br><strong>Tier 1 Suppliers:</strong> direct component manufacturers<br><strong>Manufacturer:</strong> assembles the final product<br><strong>Distribution:</strong> warehouses and distribution centers<br><strong>Retailers:</strong> sell to end consumers<br><strong>Downstream:</strong> customers and returns<br><br>Each link is connected by a flow of <strong>goods</strong> (physical), <strong>information</strong> (orders, forecasts, tracking), and <strong>finances</strong> (payments, invoices, credit).</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">📊</div>
+        <div class="card-label">SCM Goals</div>
+        <div class="card-body">The three goals of SCM:<br><br><strong>1. Cost efficiency</strong> — minimize total supply chain costs (inventory, transportation, waste)<br><br><strong>2. Responsiveness</strong> — deliver products quickly and reliably to customers<br><br><strong>3. Resilience</strong> — recover quickly from disruptions (COVID-19, Suez Canal blockage, trade wars)<br><br>These goals often conflict: efficiency requires lean inventory (JIT) but resilience requires buffer stock. SCM managers balance these tradeoffs constantly.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">📡</div>
+        <div class="card-label">Technology in SCM</div>
+        <div class="card-body">RFID: track individual items from factory to store shelf automatically. <br>IoT sensors: monitor shipping container temperature in real time (critical for pharmaceuticals, produce). <br>AI demand forecasting: predict how much to order before customers need it. <br>Blockchain: immutable record of every supply chain transaction — enables instant product authentication and recall management. <br><strong>Walmart's Food Safety initiative:</strong> blockchain reduced food tracing time from 7 days to 2.2 seconds.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 — JIT & INVENTORY -->
+  <section class="slide" id="s5" aria-label="Slide 5 of 12">
+    <div class="slide-eyebrow">Chapter 11 · Inventory</div>
+    <div class="slide-title">Just-in-Time (JIT) Inventory</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">JIT transformed manufacturing. Instead of warehousing massive inventory, you receive materials exactly when you need them. Click each to see how it works and why it's both powerful and risky.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:290px;">
+        <div class="card-icon">⏱️</div>
+        <div class="card-label">What JIT Is</div>
+        <div class="card-body"><strong>Just-in-Time (JIT)</strong> = receive materials or goods <strong>only when they are needed in production</strong> — eliminating excess inventory and storage costs. <br><br>Developed by Toyota in the 1950s (Toyota Production System). Core idea: holding inventory is waste. Every box sitting in a warehouse is capital tied up, space consumed, and a spoilage/obsolescence risk. <strong>JIT eliminates the warehouse by making the supply chain so reliable that inventory arrives the moment it's needed.</strong></div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:290px;">
+        <div class="card-icon">✅</div>
+        <div class="card-label">JIT Benefits</div>
+        <div class="card-body">
+          <strong>Cost savings:</strong> no warehouse space needed, less capital tied up in stock<br><br>
+          <strong>Quality:</strong> defects are caught faster — small batches, quicker feedback<br><br>
+          <strong>Waste reduction:</strong> no overproduction, no expired goods<br><br>
+          <strong>Flexibility:</strong> easier to change production when not locked into a large stockpile<br><br>
+          Toyota saves $300M+ annually through JIT practices. McDonald's fries are delivered JIT — potatoes arrive at restaurants 2-3 days before they're cooked.
+        </div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:290px;">
+        <div class="card-icon">⚠️</div>
+        <div class="card-label">JIT Risks</div>
+        <div class="card-body"><strong>JIT has zero buffer — any disruption shuts down production.</strong><br><br>2021 semiconductor shortage: car manufacturers using JIT had no chip inventory buffer. Factory shutdowns cost General Motors $2B in lost production.<br><br>COVID-19 supply chain collapse: PPE manufacturers using JIT had no stockpile when demand surged 10,000%.<br><br><strong>Post-pandemic trend:</strong> companies are adding strategic inventory buffers (JIT + safety stock) — accepting higher costs for resilience. "Just-in-case" is replacing pure JIT.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+    <div style="margin-top:1rem;text-align:center;">
+      <span class="badge badge-red">Exam Alert</span>
+      <span style="font-size:0.82rem;color:var(--muted);margin-left:8px;">JIT = <strong>receive goods only when needed in production</strong>. The goal is to <strong>reduce inventory costs</strong>. Not to speed up delivery. Not to increase suppliers. Reduce inventory holding costs.</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 — TEAM CHALLENGE -->
+  <section class="slide" id="s6" aria-label="Slide 6 of 12">
+    <div class="slide-eyebrow">Chapter 11 · Team Competition</div>
+    <div class="slide-title">CRM &amp; SCM Challenge</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">2 points per correct answer. Identify the concept from each scenario.</div>
+    <div class="scenario-cards" style="margin-top:1.2rem;">
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 1</div>
+        <div class="sc-q">A customer bought running shoes on Nike.com last month. This week, Nike emails her a 20% discount on running socks with a subject line: "Gear up for your next run." Which concept is this? Why does it work?</div>
+        <div class="sc-a">CRM in action — personalizing email offers based on purchase history. It works because: 1) relevance (socks logically follow shoe purchase), 2) personalization (the email feels directed at her specifically, not a mass blast), 3) timing (still in her "running gear" buying cycle). This is exactly the definition the exam tests: "A retailer personalizes email offers based on purchase history" = CRM. Cross-selling = selling a related product alongside the original purchase.</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 2</div>
+        <div class="sc-q">A Toyota assembly line factory orders steel components to arrive every 4 hours — just in time for the next production batch. No excess is stored. What is this strategy called? What is its biggest risk?</div>
+        <div class="sc-a">Just-in-Time (JIT) inventory. Receive goods only when needed in production — eliminating inventory holding costs. Biggest risk: zero buffer means any supply disruption shuts down production. If the steel delivery is delayed by a strike, weather, or supplier failure, the entire assembly line stops immediately. The 2021 semiconductor shortage exposed this: car manufacturers using pure JIT had no buffer stock and lost billions when chip supplies dried up.</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 3</div>
+        <div class="sc-q">A Starbucks analyst calculates that a customer who visits twice a week, spends $8 per visit, for an average of 15 years is worth how much total? What metric is this? How should Starbucks use this number?</div>
+        <div class="sc-a">CLV — Customer Lifetime Value. Calculation: 2 visits/week × 52 weeks × $8 × 15 years = $12,480. Starbucks should use CLV to justify marketing spend: spending $500 to acquire a customer worth $12,480 is an excellent ROI. CLV also justifies loyalty program investment — if the rewards program increases visit frequency from 2× to 3× per week, CLV jumps to $18,720. Every loyalty decision should be evaluated against CLV impact.</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 4</div>
+        <div class="sc-q">Apple designs the iPhone in California → orders processors from TSMC (Taiwan) → displays from Samsung (South Korea) → assembles at Foxconn (China) → ships to US warehouses → delivers to Apple Stores. What system manages this entire process? Name the three flows it coordinates.</div>
+        <div class="sc-a">Supply Chain Management (SCM). The three flows it coordinates: 1) Goods flow: physical movement of raw materials, components, and finished products from supplier to customer. 2) Information flow: purchase orders, production schedules, shipping tracking, demand forecasts — data that coordinates every link. 3) Financial flow: payments, invoices, letters of credit — money flowing back upstream as goods flow downstream. SCM's goal: coordinate all three flows efficiently and cost-effectively.</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 — BULLWHIP EFFECT -->
+  <section class="slide" id="s7" aria-label="Slide 7 of 12">
+    <div class="slide-eyebrow">Chapter 11 · SCM Problems</div>
+    <div class="slide-title">The Bullwhip Effect</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Small changes in consumer demand cause massive oscillations upstream in the supply chain — like a bullwhip amplifying a small wrist flick into a huge crack. Click to understand this critical SCM concept.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:290px;">
+        <div class="card-icon">🪃</div>
+        <div class="card-label">How It Works</div>
+        <div class="card-body">Consumer demand for toilet paper increases 10% → <br>Retailer orders 20% more (safety buffer) → <br>Distributor orders 30% more from the manufacturer → <br>Manufacturer orders 40% more raw materials → <br><strong>The small consumer shift became a 4× amplified order upstream.</strong><br><br>COVID-19 toilet paper shortage: consumers bought 10% more → stores ordered 50% more → factories ordered 200% more → forests were logged faster than ever. The actual demand increase was tiny — the bullwhip effect created the crisis.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:290px;">
+        <div class="card-icon">🔍</div>
+        <div class="card-label">Root Causes</div>
+        <div class="card-body"><strong>1. Demand forecast errors</strong> — each company in the chain forecasts independently, not from real customer data<br><br><strong>2. Batch ordering</strong> — companies order in large batches weekly/monthly instead of continuously<br><br><strong>3. Price fluctuations</strong> — companies overbuy during promotions and underorder at list price<br><br><strong>4. Shortage gaming</strong> — when supply is tight, everyone over-orders assuming they'll get less than requested<br><br><strong>Solution:</strong> share real-time point-of-sale data across the entire supply chain</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:290px;">
+        <div class="card-icon">💡</div>
+        <div class="card-label">SCM Solutions</div>
+        <div class="card-body"><strong>Vendor-Managed Inventory (VMI):</strong> suppliers manage their customer's inventory levels, replenishing automatically. P&G monitors Walmart's diapers inventory in real time and ships exactly what's needed — no bullwhip.<br><br><strong>Collaborative Planning, Forecasting, and Replenishment (CPFR):</strong> supply chain partners share demand forecasts and replenishment plans — everyone sees the same data.<br><br><strong>RFID + IoT:</strong> real-time visibility of inventory at every node eliminates information gaps that cause bullwhip.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 8 — CRM vs SCM COMPARISON -->
+  <section class="slide" id="s8" aria-label="Slide 8 of 12">
+    <div class="slide-eyebrow">Chapter 11 · Comparison</div>
+    <div class="slide-title">CRM vs. SCM at a Glance</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Students frequently mix up CRM and SCM on exams. This table shows you exactly how to distinguish them — and when they overlap.</div>
+    <div class="compare-wrap">
+      <table class="compare-table">
+        <thead><tr><th>Dimension</th><th>🤝 CRM</th><th>🔗 SCM</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Focus</strong></td><td>Customer relationships &amp; loyalty</td><td>Flow of goods, information, &amp; finances</td></tr>
+          <tr><td><strong>Direction</strong></td><td>Downstream (company → customer)</td><td>Both: upstream (suppliers) &amp; downstream (customers)</td></tr>
+          <tr><td><strong>Primary Goal</strong></td><td>Maximize CLV; retain customers; personalize</td><td>Reduce costs; increase speed; build resilience</td></tr>
+          <tr><td><strong>Key Metric</strong></td><td>CLV, churn rate, NPS, retention rate</td><td>Inventory turnover, on-time delivery, supply chain cost</td></tr>
+          <tr><td><strong>Example Action</strong></td><td>Personalize email offers based on purchase history</td><td>Coordinate delivery from multiple global suppliers to a factory</td></tr>
+          <tr><td><strong>Key Software</strong></td><td>Salesforce, HubSpot, Microsoft CRM</td><td>SAP SCM, Oracle SCM, Manhattan Associates</td></tr>
+          <tr><td><strong>NOT an Example</strong></td><td>Ordering raw materials (that's SCM)</td><td>Sending personalized email campaigns (that's CRM)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SLIDE 9 — LOGISTICS & FULFILLMENT -->
+  <section class="slide" id="s9" aria-label="Slide 9 of 12">
+    <div class="slide-eyebrow">Chapter 11 · Logistics</div>
+    <div class="slide-title">Logistics &amp; Order Fulfillment</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Logistics is the physical execution of SCM — moving products from where they're made to where they're needed. Click to see how the world's most efficient logistics systems work.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">📦</div>
+        <div class="card-label">Order Fulfillment</div>
+        <div class="card-body">The complete process from order placement to customer receipt: <strong>order management → inventory pick → pack → ship → track → deliver → returns</strong>. Amazon's fulfillment network: 200+ warehouses in the US, robotic picking systems, same-day delivery in major metros. <strong>Amazon's fulfillment advantage is its #1 competitive moat</strong> — no competitor can replicate 200M square feet of fulfillment infrastructure built over 20 years.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🚢</div>
+        <div class="card-label">Global Logistics</div>
+        <div class="card-body">Global supply chains span 150+ countries. A single product may cross 10+ national borders before reaching you. Key chokepoints: Suez Canal (12% of global trade), Panama Canal, Strait of Malacca. <strong>2021 Ever Given Suez Canal blockage:</strong> one ship stuck for 6 days held $9.6B in trade daily. Supply chain disruptions can cost the global economy $450B+ in a single event. Geographic concentration is a major risk.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🤖</div>
+        <div class="card-label">Automation in Logistics</div>
+        <div class="card-body">Amazon Robotics (formerly Kiva): 520,000+ robots in Amazon warehouses move shelves to human pickers instead of humans walking to shelves. Reduces walking time per order by 40%. Autonomous trucks: Waymo Via, Aurora testing self-driving long-haul trucks — $700B US trucking industry target. Drone delivery: Amazon Prime Air, Zipline (medical supplies in Rwanda). <strong>By 2030, most warehouse picking will be partially automated.</strong></div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">♻️</div>
+        <div class="card-label">Reverse Logistics</div>
+        <div class="card-body"><strong>Managing product returns, refurbishment, and disposal</strong> — the "reverse" flow from customer back to manufacturer. $890B in US returns annually (2024). Amazon return rate: ~5–20% depending on category. Reverse logistics challenge: each return must be inspected, sorted (resell vs. refurbish vs. recycle vs. dispose), and routed to the right facility. <strong>Apple's trade-in program is sophisticated reverse logistics</strong> — every returned iPhone is refurbished and resold globally.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10 — LOYALTY & PERSONALIZATION -->
+  <section class="slide" id="s10" aria-label="Slide 10 of 12">
+    <div class="slide-eyebrow">Chapter 11 · CRM Advanced</div>
+    <div class="slide-title">Loyalty Programs &amp; Personalization</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">The best CRM is invisible — customers experience it as feeling valued, not as being tracked. Click each to see how top brands implement it.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">⭐</div>
+        <div class="card-label">Starbucks Rewards</div>
+        <div class="card-body">34 million active members. Every purchase earns Stars; Stars unlock free drinks. The app tracks every order — by store, time, drink customization. Starbucks uses this data to: send personalized offers (double stars on your usual order), predict demand by location, test new products on specific segments. <strong>Starbucks Rewards members spend 3× more than non-members.</strong> The loyalty program IS the CRM system — data collection disguised as rewards.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🎬</div>
+        <div class="card-label">Netflix Personalization</div>
+        <div class="card-body">Netflix's recommendation algorithm drives 80% of all content watched. Every scroll, pause, rewatch, and rating updates your preference model. <strong>80% of what you watch was recommended by the algorithm — not chosen by search.</strong> Netflix creates different thumbnail images for the same show based on what each viewer responds to. This is CRM at massive scale: every interaction is a data point that personalizes your next experience.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🏬</div>
+        <div class="card-label">Omnichannel CRM</div>
+        <div class="card-body">Customers interact across multiple channels: app, website, store, call center, social media. <strong>Omnichannel CRM</strong> ensures a seamless, consistent experience across all touchpoints. A customer calls support about an issue → the agent already sees their purchase history → they go to the store → the associate offers a relevant accessory → they leave a positive review. Each touchpoint feeds the CRM, making the next interaction smarter.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🤖</div>
+        <div class="card-label">AI in CRM</div>
+        <div class="card-body">Salesforce Einstein: AI layer in CRM that predicts which leads will convert, suggests the best time to call a prospect, and scores customer health risk. Chatbots handle 80% of routine CRM interactions — service requests, order tracking, returns — freeing humans for complex issues. <strong>Predictive churn models:</strong> AI flags customers likely to cancel based on usage patterns, and triggers a retention offer before they request cancellation. AI makes CRM proactive instead of reactive.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 11 — KEY TAKEAWAYS -->
+  <section class="slide" id="s11" aria-label="Slide 11 of 12">
+    <div class="slide-eyebrow">Chapter 11 · Takeaways</div>
+    <div class="slide-title">What You Must Know</div>
+    <div class="accent-line"></div>
+    <ul class="takeaway-list" id="takeaways-s11">
+      <li><strong>CRM (Customer Relationship Management)</strong> = managing ALL customer interactions to build loyalty and maximize value. Strategy + software (Salesforce, HubSpot). Key actions: personalization, upselling, cross-selling, loyalty programs, churn prevention. CRM is customer-facing — if it's not about the customer, it's not CRM.</li>
+      <li><strong>CLV (Customer Lifetime Value)</strong> = total revenue a customer generates over their entire relationship with a company. Not how long they've lived — their total spending across the relationship. CLV justifies acquisition costs and loyalty program investment. High CLV customers deserve more marketing spend and premium service.</li>
+      <li><strong>SCM (Supply Chain Management)</strong> = coordinating the flow of goods, information, and finances from raw materials to the end customer. Three flows: physical goods, information (orders/forecasts), and finances (payments). Goal: efficient, cost-effective, resilient coordination of the entire supply chain.</li>
+      <li><strong>JIT (Just-in-Time)</strong> = receive goods only when needed in production — eliminating inventory holding costs. Developed by Toyota. Risk: zero buffer means any supply disruption shuts down production. COVID-19 semiconductor shortage exposed JIT's fragility — companies are now adding strategic safety stock.</li>
+      <li><strong>CRM in action (exam answer):</strong> A retailer sends personalized email offers based on purchase history. NOT: ordering raw materials (SCM), shipping to a distributor (logistics), or submitting an expense report (ERP/accounting). If it's customer-facing personalization, it's CRM.</li>
+      <li>Bullwhip effect: small consumer demand changes amplify upstream into massive supply chain overreactions. Caused by independent forecasting, batch ordering, and information gaps. Solution: real-time POS data sharing across the supply chain (Walmart-P&G vendor-managed inventory model).</li>
+    </ul>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:1rem;text-align:center;">Press <kbd style="background:#334155;padding:2px 6px;border-radius:4px;">Space</kbd> or <kbd style="background:#334155;padding:2px 6px;border-radius:4px;">→</kbd> to reveal each takeaway</p>
+  </section>
+
+  <!-- SLIDE 12 — GAME TIME -->
+  <section class="slide" id="s12" aria-label="Slide 12 of 12">
+    <div class="slide-eyebrow">Chapter 11 · Game Time</div>
+    <div class="slide-title">🎮 Game Time!</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Open the <strong>MIS Journey App</strong> and play the Chapter 11 quiz<br>to lock in what you learned today</div>
+    <div class="stats-row" style="margin-top:1.5rem;">
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">Quiz questions: CRM, SCM, CLV, JIT, CRM in action</div></div>
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">Study tips pre-loaded in the app</div></div>
+      <div class="stat-box"><div class="stat-num">100%</div><div class="stat-label">Exam-relevant — CRM &amp; SCM are high-frequency exam topics</div></div>
+    </div>
+    <div style="margin-top:1.5rem;text-align:center;">
+      <span class="badge badge-sky" style="font-size:0.85rem;padding:8px 20px;">Remember: CRM = customer loyalty · CLV = lifetime revenue · SCM = coordinate goods/info/finances · JIT = receive only when needed</span>
+    </div>
+  </section>
+
+</div>
+
+<div id="controls" role="navigation" aria-label="Slide navigation">
+  <button class="ctrl-btn" id="btn-sb" onclick="toggleSB()" aria-label="Toggle scoreboard">🏆</button>
+  <button class="ctrl-btn" id="btn-print" onclick="window.print()" aria-label="Print slides">🖨</button>
+  <button class="ctrl-btn" id="btn-prev" onclick="navigate(-1)" disabled aria-label="Previous slide">← Prev</button>
+  <button class="ctrl-btn" id="btn-next" onclick="navigate(1)" aria-label="Next slide">Next →</button>
+</div>
+
+<script>
+  const TOTAL = 12; let current = 1;
+  const scores = { r: 0, b: 0, g: 0 };
+  let takeawayIdx = 0; const TAKEAWAY_SLIDE = 11;
+
+  function navigate(dir) {
+    if (current === TAKEAWAY_SLIDE && dir === 1) {
+      const items = document.querySelectorAll('#takeaways-s11 li');
+      if (takeawayIdx < items.length) { items[takeawayIdx].classList.add('show'); takeawayIdx++; return; }
+    }
+    const prev = document.getElementById('s' + current);
+    prev.classList.remove('active'); prev.classList.add('exit');
+    setTimeout(() => prev.classList.remove('exit'), 420);
+    current = Math.max(1, Math.min(TOTAL, current + dir));
+    document.getElementById('s' + current).classList.add('active');
+    updateUI();
+    if (current === TAKEAWAY_SLIDE) takeawayIdx = 0;
+  }
+
+  function updateUI() {
+    document.getElementById('slide-counter').textContent = current + ' / ' + TOTAL;
+    const pb = document.getElementById('progress-bar');
+    pb.style.width = (current / TOTAL * 100).toFixed(2) + '%';
+    pb.setAttribute('aria-valuenow', current);
+    document.getElementById('btn-prev').disabled = current === 1;
+    document.getElementById('btn-next').disabled = current === TOTAL;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); navigate(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); navigate(-1); }
+  });
+
+  function toggleSB() { const sb = document.getElementById('scoreboard'); sb.style.display = sb.style.display === 'block' ? 'none' : 'block'; }
+  function adj(team, delta) { scores[team] = Math.max(0, scores[team] + delta); document.getElementById('sc-' + team).textContent = scores[team]; }
+  function reveal(card) { card.classList.toggle('revealed'); }
+  function revealSc(card) { card.classList.toggle('revealed'); }
+
+  let timerIntervals = {};
+  function startTimer(id, seconds) {
+    if (timerIntervals[id]) clearInterval(timerIntervals[id]);
+    let remaining = seconds;
+    const el = document.getElementById(id);
+    const btn = el.nextElementSibling;
+    btn.textContent = '⏹ Stop';
+    btn.onclick = () => { clearInterval(timerIntervals[id]); btn.textContent = '▶ Restart'; btn.onclick = () => startTimer(id, seconds); };
+    function tick() {
+      const m = Math.floor(remaining / 60), s = remaining % 60;
+      el.textContent = m + ':' + String(s).padStart(2, '0');
+      if (remaining <= 0) { clearInterval(timerIntervals[id]); el.textContent = '⏱ Done!'; btn.textContent = '▶ Restart'; btn.onclick = () => startTimer(id, seconds); }
+      remaining--;
+    }
+    tick(); timerIntervals[id] = setInterval(tick, 1000);
+  }
+</script>
+</body>
+</html>

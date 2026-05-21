@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 10: IS within the Organization — ISM3011 Slides</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root { --accent: #0284C7; --accent2: #0369A1; --dark: #0F172A; --card-bg: #1E293B; --muted: #94A3B8; --white: #F8FAFC; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--dark); color: var(--white); height: 100vh; overflow: hidden; }
+    #progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--accent); transition: width 0.4s ease; z-index: 200; }
+    #slide-counter { position: fixed; top: 12px; right: 16px; z-index: 200; font-size: 0.78rem; color: var(--muted); font-weight: 600; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 20px; }
+    #scoreboard { position: fixed; top: 12px; left: 16px; z-index: 200; background: rgba(15,23,42,0.85); border: 1px solid #334155; border-radius: 12px; padding: 10px 14px; min-width: 160px; display: none; }
+    #scoreboard h3 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 6px; }
+    .score-row { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; }
+    .score-val { font-weight: 800; color: var(--accent); font-size: 0.9rem; }
+    .score-btn { background: none; border: none; cursor: pointer; font-size: 0.9rem; padding: 0 2px; }
+    #controls { position: fixed; bottom: 16px; right: 16px; z-index: 200; display: flex; gap: 8px; align-items: center; }
+    .ctrl-btn { background: rgba(30,41,59,0.9); border: 1px solid #334155; color: var(--white); padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .ctrl-btn:hover { background: var(--accent); border-color: var(--accent); }
+    .ctrl-btn:disabled { opacity: 0.35; cursor: default; }
+    #slides-wrap { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+    .slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 3rem 5vw 4rem; opacity: 0; transform: translateX(60px); transition: opacity 0.4s ease, transform 0.4s ease; pointer-events: none; }
+    .slide.active { opacity: 1; transform: translateX(0); pointer-events: all; }
+    .slide.exit { opacity: 0; transform: translateX(-60px); }
+    .slide-eyebrow { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); font-weight: 700; margin-bottom: 0.6rem; text-align: center; }
+    .slide-title { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; text-align: center; line-height: 1.15; margin-bottom: 1rem; }
+    .slide-sub { font-size: clamp(0.9rem, 2vw, 1.15rem); color: var(--muted); text-align: center; max-width: 700px; line-height: 1.55; }
+    .accent-line { width: 60px; height: 4px; background: var(--accent); border-radius: 2px; margin: 0.8rem auto 1.2rem; }
+    .cards-row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1.2rem; width: 100%; max-width: 1000px; }
+    .flip-card { background: var(--card-bg); border: 1px solid #334155; border-radius: 14px; padding: 1.2rem 1.4rem; cursor: pointer; transition: all 0.25s; min-width: 170px; max-width: 220px; flex: 1; text-align: center; }
+    .flip-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .flip-card.revealed { border-color: var(--accent); background: rgba(2,132,199,0.12); }
+    .flip-card .card-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .flip-card .card-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+    .flip-card .card-body { font-size: 0.85rem; margin-top: 0.4rem; line-height: 1.45; display: none; }
+    .flip-card.revealed .card-body { display: block; }
+    .flip-card .card-hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.6rem; }
+    .flip-card.revealed .card-hint { display: none; }
+    .stats-row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; width: 100%; max-width: 860px; }
+    .stat-box { background: var(--card-bg); border: 1px solid #334155; border-radius: 12px; padding: 1rem 1.4rem; text-align: center; flex: 1; min-width: 160px; max-width: 220px; }
+    .stat-num { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; color: var(--accent); }
+    .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 4px; line-height: 1.35; }
+    .scenario-cards { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1.2rem; max-width: 960px; }
+    .scenario-card { background: var(--card-bg); border: 1px solid #334155; border-radius: 14px; padding: 1.2rem 1.4rem; flex: 1; min-width: 200px; max-width: 280px; cursor: pointer; transition: all 0.25s; }
+    .scenario-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .scenario-card.revealed { border-color: var(--accent); }
+    .scenario-card .sc-num { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); }
+    .scenario-card .sc-q { font-size: 0.88rem; margin-top: 0.4rem; line-height: 1.45; font-weight: 600; }
+    .scenario-card .sc-a { font-size: 0.82rem; color: #7DD3FC; margin-top: 0.5rem; display: none; }
+    .scenario-card.revealed .sc-a { display: block; }
+    .scenario-card .sc-hint { font-size: 0.7rem; color: var(--muted); margin-top: 0.4rem; }
+    .scenario-card.revealed .sc-hint { display: none; }
+    .compare-wrap { width: 100%; max-width: 860px; margin-top: 1rem; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .compare-table th { background: var(--accent); color: white; padding: 8px 14px; text-align: left; }
+    .compare-table td { border-bottom: 1px solid #334155; padding: 8px 14px; vertical-align: top; }
+    .compare-table tr:nth-child(odd) td { background: rgba(2,132,199,0.08); }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+    .badge-sky { background: rgba(2,132,199,0.2); color: #7DD3FC; }
+    .badge-amber { background: rgba(217,119,6,0.2); color: #FCD34D; }
+    .badge-red { background: rgba(220,38,38,0.2); color: #FCA5A5; }
+    .takeaway-list { list-style: none; max-width: 760px; width: 100%; margin-top: 1rem; }
+    .takeaway-list li { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; margin-bottom: 0.6rem; font-size: clamp(0.82rem, 1.6vw, 0.98rem); line-height: 1.45; opacity: 0; transform: translateX(20px); transition: opacity 0.35s, transform 0.35s; }
+    .takeaway-list li.show { opacity: 1; transform: translateX(0); }
+    .pyramid-wrap { margin-top: 1.2rem; display: flex; flex-direction: column; align-items: center; gap: 6px; max-width: 600px; width: 100%; }
+    .pyramid-level { border-radius: 8px; padding: 10px 20px; text-align: center; cursor: pointer; transition: all 0.25s; border: 1px solid #334155; }
+    .pyramid-level:hover { border-color: var(--accent); }
+    .pyramid-level.revealed { border-color: var(--accent); background: rgba(2,132,199,0.15); }
+    .pl-title { font-weight: 800; font-size: 0.88rem; }
+    .pl-body { font-size: 0.78rem; color: #7DD3FC; margin-top: 5px; display: none; line-height: 1.4; }
+    .pyramid-level.revealed .pl-body { display: block; }
+    .pl-hint { font-size: 0.68rem; color: var(--muted); }
+    .pyramid-level.revealed .pl-hint { display: none; }
+    .timer-wrap { margin-top: 1.2rem; text-align: center; }
+    .timer-display { font-size: 2.5rem; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1; }
+    .timer-btn { margin-top: 0.6rem; background: var(--accent); color: white; border: none; padding: 10px 28px; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
+    .timer-btn:hover { background: var(--accent2); }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar" style="width:8.33%;" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="12"></div>
+<div id="slide-counter" aria-live="polite">1 / 12</div>
+
+<div id="scoreboard" aria-label="Team scoreboard">
+  <h3>🏆 Scoreboard</h3>
+  <div class="score-row"><span>🔴 Team Red</span><div style="display:flex;align-items:center;gap:4px;"><button class="score-btn" onclick="adj('r',-1)">−</button><span class="score-val" id="sc-r">0</span><button class="score-btn" onclick="adj('r',1)">+</button></div></div>
+  <div class="score-row"><span>🔵 Team Blue</span><div style="display:flex;align-items:center;gap:4px;"><button class="score-btn" onclick="adj('b',-1)">−</button><span class="score-val" id="sc-b">0</span><button class="score-btn" onclick="adj('b',1)">+</button></div></div>
+  <div class="score-row"><span>🟢 Team Green</span><div style="display:flex;align-items:center;gap:4px;"><button class="score-btn" onclick="adj('g',-1)">−</button><span class="score-val" id="sc-g">0</span><button class="score-btn" onclick="adj('g',1)">+</button></div></div>
+</div>
+
+<div id="slides-wrap" aria-live="polite" aria-atomic="true">
+
+  <!-- SLIDE 1 — HOOK -->
+  <section class="slide active" id="s1" aria-label="Slide 1 of 12">
+    <div class="slide-eyebrow">Chapter 10 · Hook</div>
+    <div class="slide-title">Every Decision Needs the Right Data</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">A cashier doesn't need a 50-page strategic report — they need to know the price and inventory. A CEO doesn't need every individual transaction — they need the big picture. This chapter explains why organizations build different IS for different decision levels.</div>
+    <div class="stats-row" style="margin-top:1.4rem;">
+      <div class="stat-box"><div class="stat-num">$100B+</div><div class="stat-label">Global ERP market — nearly every large company runs on an ERP system</div></div>
+      <div class="stat-box"><div class="stat-num">$15M</div><div class="stat-label">Average cost of a failed ERP implementation — Hershey's 1999 SAP rollout disrupted $100M in orders</div></div>
+      <div class="stat-box"><div class="stat-num">30%</div><div class="stat-label">Of Fortune 500 companies use SAP ERP — one company connecting ALL their business functions in one system</div></div>
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">Types of IS in this chapter: TPS, MIS, DSS, EIS, ERP — know every acronym and when each is used</div></div>
+    </div>
+    <div class="timer-wrap" style="margin-top:1rem;">
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:4px;">Partner activity — 60 sec: Think of a company you know. Name one decision made at each level: cashier, manager, CEO. What info does each need?</div>
+      <div class="timer-display" id="t1">1:00</div>
+      <button class="timer-btn" onclick="startTimer('t1',60)">▶ Start Timer</button>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 — IS PYRAMID -->
+  <section class="slide" id="s2" aria-label="Slide 2 of 12">
+    <div class="slide-eyebrow">Chapter 10 · Framework</div>
+    <div class="slide-title">The IS Decision Pyramid</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Different organizational levels need different types of information. Click each level of the pyramid to see which IS serves it — and why.</div>
+    <div class="pyramid-wrap">
+      <div class="pyramid-level" onclick="this.classList.toggle('revealed')" style="width:30%;background:rgba(2,132,199,0.1);">
+        <div class="pl-title">🏆 EIS — Strategic Level</div>
+        <div class="pl-hint">Click to reveal</div>
+        <div class="pl-body">Senior executives (CEO, CFO, Board). Unstructured decisions. Long-term planning. Need: KPIs, trends, competitor data, high-level dashboards. Answer: "Are we on track to meet our 5-year goals?"</div>
+      </div>
+      <div class="pyramid-level" onclick="this.classList.toggle('revealed')" style="width:50%;background:rgba(2,132,199,0.08);">
+        <div class="pl-title">🧮 DSS — Semi-Structured Level</div>
+        <div class="pl-hint">Click to reveal</div>
+        <div class="pl-body">Middle-to-senior managers. Semi-structured decisions with uncertainty. Need: models, data analysis tools, "what-if" simulations. Answer: "Should we open a new warehouse in Tampa? Here's a model with 5 scenarios."</div>
+      </div>
+      <div class="pyramid-level" onclick="this.classList.toggle('revealed')" style="width:70%;background:rgba(2,132,199,0.06);">
+        <div class="pl-title">📊 MIS — Structured Management Level</div>
+        <div class="pl-hint">Click to reveal</div>
+        <div class="pl-body">Middle managers (department heads, regional managers). Structured decisions with known criteria. Need: weekly/monthly reports, summaries, exception alerts. Answer: "Sales are 12% below target in the SE region — here's the breakdown by store."</div>
+      </div>
+      <div class="pyramid-level" onclick="this.classList.toggle('revealed')" style="width:90%;background:rgba(2,132,199,0.04);">
+        <div class="pl-title">⚙️ TPS — Operational Level</div>
+        <div class="pl-hint">Click to reveal</div>
+        <div class="pl-body">Front-line workers (cashiers, clerks, customer service). Highly structured, routine transactions. Need: real-time transaction processing, speed, accuracy. Answer: "Customer paid $29.99 for item #4471. Transaction complete. Inventory updated."</div>
+      </div>
+    </div>
+    <p style="font-size:0.78rem;color:var(--muted);margin-top:0.8rem;text-align:center;">Click each level to reveal the IS details. Exam questions give you a user type → you identify the IS.</p>
+  </section>
+
+  <!-- SLIDE 3 — TPS -->
+  <section class="slide" id="s3" aria-label="Slide 3 of 12">
+    <div class="slide-eyebrow">Chapter 10 · TPS</div>
+    <div class="slide-title">Transaction Processing System (TPS)</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">The foundation of every organization's IS stack. Every sale, paycheck, and order flows through a TPS. Click each to understand what makes TPS unique.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">⚙️</div>
+        <div class="card-label">What TPS Does</div>
+        <div class="card-body"><strong>Handles routine, day-to-day business transactions</strong> — the high-volume repetitive operations that keep the business running. Sales, order processing, payroll, billing, inventory updates, airline reservations, ATM withdrawals. Speed and accuracy are everything. <strong>A TPS processes millions of transactions per day</strong> — Visa's network processes 65,000 transactions per second globally.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🔄</div>
+        <div class="card-label">Batch vs. Real-Time</div>
+        <div class="card-body"><strong>Batch processing:</strong> transactions are collected and processed in groups at a scheduled time. Example: payroll runs every two weeks — all time records processed together. <br><strong>Real-time processing:</strong> each transaction is processed immediately as it occurs. Example: ATM withdrawal — your balance updates instantly. <strong>Most modern TPS uses real-time</strong> — customers expect immediate confirmation. Batch is used when real-time isn't critical (payroll, end-of-month reports).</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🔗</div>
+        <div class="card-label">TPS Feeds Other IS</div>
+        <div class="card-body">TPS is the <strong>data source for MIS, DSS, and EIS</strong>. Without accurate TPS data, every other IS fails. The chain: individual sales transactions → TPS captures them → MIS aggregates them into weekly sales reports → DSS models them for forecasting → EIS displays the trend on a CEO dashboard. <strong>TPS is the foundation of the entire IS pyramid.</strong></div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">📍</div>
+        <div class="card-label">TPS Examples</div>
+        <div class="card-body">Point-of-sale systems (cash register → inventory update → sales record). Online order processing (Amazon confirms → payment processes → warehouse picks → shipping updates). Payroll processing. Bank ATM withdrawals. Hotel reservation system. Airline ticketing. FIU's Panthersoft (student registration, tuition payments). <strong>Any high-volume, repetitive business operation = TPS.</strong></div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 — MIS & DSS -->
+  <section class="slide" id="s4" aria-label="Slide 4 of 12">
+    <div class="slide-eyebrow">Chapter 10 · MIS &amp; DSS</div>
+    <div class="slide-title">MIS &amp; Decision Support Systems</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">MIS turns raw data into manager-ready reports. DSS goes further — helping tackle complex, unstructured problems. Click to see the distinction.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:280px;">
+        <div class="card-icon">📊</div>
+        <div class="card-label">MIS — Management IS</div>
+        <div class="card-body"><strong>Provides structured reports and summaries to support managerial decisions.</strong> Takes TPS data, aggregates it, and produces scheduled or on-demand reports. <br><br>Examples: weekly sales report by region, monthly inventory status, quarterly employee productivity summary, exception reports (flag items below/above threshold). <br><br>Users: middle managers. Decisions: structured (clear criteria, repeatable process). Purpose: monitoring and control.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:280px;">
+        <div class="card-icon">🧮</div>
+        <div class="card-label">DSS — Decision Support</div>
+        <div class="card-body"><strong>Provides models and data analysis tools to help managers tackle complex, semi-structured decisions.</strong> DSS doesn't make the decision — it provides the tools to analyze options. <br><br>"What-if" analysis: if we raise prices by 10%, what happens to volume and profit? Scenario modeling: should we acquire Company X? DSS runs the numbers for each scenario. <br><br>Examples: financial modeling tools, route optimization, marketing mix analysis, weather forecasting models.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:280px;">
+        <div class="card-icon">🔑</div>
+        <div class="card-label">MIS vs. DSS</div>
+        <div class="card-body">
+          <strong>MIS:</strong><br>
+          → Structured decisions<br>
+          → Known criteria<br>
+          → Produces reports<br>
+          → Looks backward (what happened)<br><br>
+          <strong>DSS:</strong><br>
+          → Semi/unstructured decisions<br>
+          → Uncertain outcomes<br>
+          → Supports analysis<br>
+          → Looks forward (what if)<br><br>
+          <span style="color:#FCD34D;">Exam trap: both serve managers — DSS handles the harder, more ambiguous decisions.</span>
+        </div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 — EIS & ERP -->
+  <section class="slide" id="s5" aria-label="Slide 5 of 12">
+    <div class="slide-eyebrow">Chapter 10 · EIS &amp; ERP</div>
+    <div class="slide-title">EIS &amp; Enterprise Resource Planning</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">EIS serves the C-suite. ERP connects the entire organization. Click each to understand these two enterprise-scale systems.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:290px;">
+        <div class="card-icon">🏆</div>
+        <div class="card-label">EIS — Executive IS</div>
+        <div class="card-body"><strong>Designed for senior executives to monitor KPIs and high-level strategic performance.</strong> Aggregates data from MIS, DSS, and external sources into executive dashboards. Emphasizes visualization: charts, gauges, trend lines, alerts. <br><br>CEO checks: revenue vs. target, market share, customer satisfaction score, employee turnover. <strong>Key feature:</strong> drill-down capability — click a high-level number to see the underlying detail. No complex queries required; designed for non-technical executives.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:290px;">
+        <div class="card-icon">🏭</div>
+        <div class="card-label">ERP — Enterprise Resource Planning</div>
+        <div class="card-body"><strong>Integrates ALL major business functions into one unified system</strong> — finance, HR, supply chain, manufacturing, sales, procurement. <br><br>Before ERP: every department had its own system, data was siloed, and information didn't flow between departments. After ERP: one shared database, real-time visibility across the entire company. <br><br><strong>Key vendors:</strong> SAP (60% market share), Oracle, Microsoft Dynamics. <strong>ERP is the backbone of most large organizations.</strong></div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:260px;">
+        <div class="card-icon">⚠️</div>
+        <div class="card-label">ERP Implementation Risk</div>
+        <div class="card-body">ERP projects are notoriously risky: <br><br>🚨 <strong>Hershey's (1999):</strong> $112M SAP implementation went live before it was stable — couldn't process Halloween orders. Lost $150M in sales.<br><br>🚨 <strong>Nike (2000):</strong> $400M SAP rollout caused $100M in excess inventory and lost orders.<br><br>Why? ERP requires changing how every department works. The technology is secondary — the change management is the hard part.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+    <div style="margin-top:1rem;text-align:center;">
+      <span class="badge badge-red">Exam Alert</span>
+      <span style="font-size:0.82rem;color:var(--muted);margin-left:8px;">ERP = Enterprise Resource Planning. It integrates ALL business functions into ONE system. EIS = senior executive dashboards and KPIs. These two often appear on the same question.</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 — TEAM CHALLENGE -->
+  <section class="slide" id="s6" aria-label="Slide 6 of 12">
+    <div class="slide-eyebrow">Chapter 10 · Team Competition</div>
+    <div class="slide-title">IS Type Challenge</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">2 points per correct answer. Identify which IS type (TPS, MIS, DSS, EIS, ERP) fits each scenario.</div>
+    <div class="scenario-cards" style="margin-top:1.2rem;">
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 1</div>
+        <div class="sc-q">A Target cashier scans 20 items for a customer. The system calculates the total, processes the credit card, updates the inventory, and prints a receipt — all in 3 seconds. What IS type handles this?</div>
+        <div class="sc-a">TPS — Transaction Processing System. This is a routine, high-speed, repetitive business transaction. No decision-making required — the process is fully structured and automated. TPS speed and accuracy are critical; any delay or error damages customer trust. This same transaction feeds into the MIS that produces daily sales reports.</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 2</div>
+        <div class="sc-q">A regional sales manager opens a report showing which of her 15 stores are below their weekly targets, sorted by variance. She uses this to prioritize coaching calls. Which IS type produced this report?</div>
+        <div class="sc-a">MIS — Management Information System. It produces structured, pre-defined reports from TPS data to support managerial decisions. The manager didn't build the model or run complex analysis — the system generated the report automatically. The decision (which stores to call) is structured: she knows the criteria (below target) and has a clear action (coaching call).</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 3</div>
+        <div class="sc-q">McDonald's CFO is evaluating whether to open 200 new locations in Southeast Asia. She uses a tool that models projected costs, revenue under 3 demand scenarios, currency risk, and break-even timelines. Which IS type supports this decision?</div>
+        <div class="sc-a">DSS — Decision Support System. This is a complex, semi-structured decision with significant uncertainty. The CFO doesn't have a standard report — she needs modeling tools to analyze multiple "what-if" scenarios. DSS supports the decision by running the numbers; it doesn't make the decision. No amount of MIS reports can provide the forward-looking scenario analysis this decision requires.</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 4</div>
+        <div class="sc-q">Walmart's CEO opens a real-time dashboard showing global revenue, profit margins, inventory turnover, and customer satisfaction scores across 10,000+ stores — all on one screen, updated every 15 minutes. Which IS type is this?</div>
+        <div class="sc-a">EIS — Executive Information System. Designed specifically for senior executives: visual KPI dashboards, drill-down capability, high-level strategic view. The CEO doesn't process transactions (TPS), write reports (MIS), or build models (DSS) — they monitor the big picture via dashboards. EIS aggregates data from all other IS types into one executive-level view.</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 — FUNCTIONAL IS -->
+  <section class="slide" id="s7" aria-label="Slide 7 of 12">
+    <div class="slide-eyebrow">Chapter 10 · Functional Systems</div>
+    <div class="slide-title">Functional Information Systems</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Before ERP, every department had its own IS. These functional systems still exist inside ERP platforms — click each to see how they work.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">💰</div>
+        <div class="card-label">Accounting IS</div>
+        <div class="card-body">Tracks financial transactions, manages accounts payable/receivable, produces financial statements (P&amp;L, balance sheet), handles budgeting and tax reporting. QuickBooks (small business), SAP FI module (enterprise). <strong>The financial IS is often the most critical</strong> — it must be 100% accurate for regulatory and legal compliance. SOX (Sarbanes-Oxley) requires auditable financial IS controls for public companies.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">👥</div>
+        <div class="card-label">HRM — Human Resource IS</div>
+        <div class="card-body">Manages the employee lifecycle: recruitment (applicant tracking), onboarding, payroll, benefits administration, performance reviews, training, compliance. <strong>Workday, ADP, Oracle HCM</strong> are leading HRIS platforms. Modern HRIS includes analytics: voluntary turnover prediction, flight risk scoring (which employees are likely to leave), diversity metrics, compensation equity analysis.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🏭</div>
+        <div class="card-label">Manufacturing IS</div>
+        <div class="card-body">Manages production planning, scheduling, quality control, and inventory. Material Requirements Planning (MRP) calculates what raw materials are needed and when. <strong>Production scheduling IS:</strong> coordinates the factory floor — which machines produce what, in what sequence, at what time. Modern manufacturing IS integrates with IoT sensors on equipment for real-time production monitoring and predictive maintenance.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">📣</div>
+        <div class="card-label">Marketing IS</div>
+        <div class="card-body">Supports market research, campaign management, customer segmentation, and sales force automation. CRM (Customer Relationship Management) is a key marketing IS. <strong>Marketing automation tools</strong> (HubSpot, Marketo, Salesforce) automate email campaigns, lead scoring, and customer journey tracking. Marketing IS answers: which campaigns work, which segments convert, what's the ROI of each channel?</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 8 — MASTER COMPARISON TABLE -->
+  <section class="slide" id="s8" aria-label="Slide 8 of 12">
+    <div class="slide-eyebrow">Chapter 10 · Master Reference</div>
+    <div class="slide-title">All 5 IS Types at a Glance</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">This table is your exam cheat sheet. Every scenario question maps to one of these rows.</div>
+    <div class="compare-wrap">
+      <table class="compare-table">
+        <thead><tr><th>IS Type</th><th>Full Name</th><th>Primary User</th><th>Decision Type</th><th>Key Output</th></tr></thead>
+        <tbody>
+          <tr><td><strong>TPS</strong></td><td>Transaction Processing System</td><td>Front-line workers</td><td>Structured/routine</td><td>Processed transactions, updated records</td></tr>
+          <tr><td><strong>MIS</strong></td><td>Management Information System</td><td>Middle managers</td><td>Structured, recurring</td><td>Reports, summaries, exception alerts</td></tr>
+          <tr><td><strong>DSS</strong></td><td>Decision Support System</td><td>Analysts, managers</td><td>Semi-structured, complex</td><td>Models, what-if analysis, scenarios</td></tr>
+          <tr><td><strong>EIS</strong></td><td>Executive Information System</td><td>Senior executives (CEO, CFO)</td><td>Unstructured, strategic</td><td>KPI dashboards, trend visualizations</td></tr>
+          <tr><td><strong>ERP</strong></td><td>Enterprise Resource Planning</td><td>Entire organization</td><td>All levels</td><td>Integrated cross-functional system</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:1rem;text-align:center;">
+      <span class="badge badge-amber">Exam Strategy</span>
+      <span style="font-size:0.82rem;color:var(--muted);margin-left:8px;">Look at WHO is using the system. Cashier → TPS. Manager → MIS. Complex decision → DSS. CEO dashboard → EIS. Whole company in one system → ERP.</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 9 — KPI & BI -->
+  <section class="slide" id="s9" aria-label="Slide 9 of 12">
+    <div class="slide-eyebrow">Chapter 10 · Business Intelligence</div>
+    <div class="slide-title">KPIs, Dashboards &amp; Business Intelligence</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Modern IS goes beyond reporting — it provides real-time business intelligence to guide decisions at every level. Click each to explore.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🎯</div>
+        <div class="card-label">KPI</div>
+        <div class="card-body"><strong>Key Performance Indicator</strong> — a measurable value that shows how effectively an organization is achieving its key objectives. Revenue growth, customer satisfaction score (NPS), employee turnover rate, on-time delivery %, inventory turnover. <strong>Good KPIs:</strong> specific, measurable, actionable, tied to strategy. Every level of the IS pyramid tracks different KPIs — the EIS shows the CEO's KPIs while the MIS shows a manager's operational KPIs.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">📈</div>
+        <div class="card-label">Business Intelligence (BI)</div>
+        <div class="card-body">The strategies, technologies, and tools for collecting, analyzing, and presenting business data to support decision-making. BI tools: Tableau, Power BI, Looker, Qlik. Key capabilities: interactive dashboards, data visualization, OLAP (drill-down analysis), ad hoc querying. <strong>BI is the layer on top of your IS</strong> — it turns raw data from TPS into actionable insights for every level of the organization.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🗄️</div>
+        <div class="card-label">Data Warehouse</div>
+        <div class="card-body">A <strong>central repository of integrated data from all IS sources</strong> — TPS, MIS, external data. Optimized for analysis, not transactions. Data warehouse ≠ database. A transaction database handles one record at a time (speed). A data warehouse holds years of historical data for complex analysis (insight). <strong>Amazon Redshift, Google BigQuery, Snowflake</strong> are modern cloud data warehouses. Every large company has one.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🔍</div>
+        <div class="card-label">OLAP</div>
+        <div class="card-body"><strong>Online Analytical Processing</strong> — technology that enables users to analyze data from multiple perspectives simultaneously. Cube model: you can slice sales data by product, region, time period, and salesperson all at once. <strong>Drill down:</strong> start at total company revenue → drill to division → drill to region → drill to individual store → drill to individual transaction. OLAP is the engine behind most BI dashboards and EIS tools.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10 — INTEGRATION & SILOS -->
+  <section class="slide" id="s10" aria-label="Slide 10 of 12">
+    <div class="slide-eyebrow">Chapter 10 · Integration</div>
+    <div class="slide-title">Why Integration Matters: Breaking Silos</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Disconnected IS create information silos — data is trapped in departments and can't flow where it's needed. Click to understand why ERP was invented.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🏚️</div>
+        <div class="card-label">The Silo Problem</div>
+        <div class="card-body">Before ERP, each department ran its own software: Finance used one system, HR another, Sales a third, Manufacturing a fourth. Data was duplicated, inconsistent, and out of sync. Customer placed an order → Sales had it. Warehouse didn't know. Finance wasn't notified. Shipping had no visibility. <strong>The "silo" problem:</strong> information is stuck in departmental walls instead of flowing across the organization.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🔗</div>
+        <div class="card-label">ERP as Integration Layer</div>
+        <div class="card-body">ERP solves silos with a <strong>single shared database</strong> — all departments read from and write to the same data. Customer places order → automatically triggers inventory check → warehouse pick order → shipping label → invoice in accounts receivable → sales commission calculation in HR. <strong>One input, multiple automatic outputs.</strong> No re-entry, no lag, no inconsistency. This is why Fortune 500 companies pay $50M+ for SAP implementations.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">📡</div>
+        <div class="card-label">APIs &amp; Modern Integration</div>
+        <div class="card-body">Not every company can afford a full ERP. Modern alternative: <strong>APIs</strong> (Application Programming Interfaces) connect separate systems in real time. Shopify API connects to shipping, accounting, and inventory separately. Salesforce CRM integrates with Marketo (marketing), Zendesk (support), and NetSuite (finance) via API. <strong>Modern IS architecture is often a "best-of-breed" approach</strong> — specialized tools for each function, connected by APIs.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🔄</div>
+        <div class="card-label">Feedback Loops</div>
+        <div class="card-body">Well-integrated IS creates organizational <strong>feedback loops</strong> — output from one system becomes input for another. TPS generates sales data → MIS compares to targets → alerts manager of underperformance → manager adjusts strategy → updated strategy changes targets in MIS → new TPS data measures against new targets. <strong>The IS pyramid isn't a hierarchy — it's a loop.</strong> Data flows up AND down constantly to keep the organization adapting.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 11 — KEY TAKEAWAYS -->
+  <section class="slide" id="s11" aria-label="Slide 11 of 12">
+    <div class="slide-eyebrow">Chapter 10 · Takeaways</div>
+    <div class="slide-title">What You Must Know</div>
+    <div class="accent-line"></div>
+    <ul class="takeaway-list" id="takeaways-s11">
+      <li><strong>TPS (Transaction Processing System)</strong> handles routine, day-to-day business transactions — sales, payroll, orders. Used by front-line workers. High volume, structured, must be fast and accurate. Feeds data to all other IS types. Examples: POS systems, ATM networks, online order processing.</li>
+      <li><strong>MIS (Management Information System)</strong> provides reports and summaries to support managerial decisions. Takes TPS data and aggregates it into weekly/monthly reports. Used by middle managers for structured decisions. Examples: sales-by-region report, inventory status summary, exception alerts.</li>
+      <li><strong>DSS (Decision Support System)</strong> provides models and data analysis tools for complex, semi-structured decisions. Handles "what-if" scenarios and uncertainty. Used by managers and analysts. Examples: financial models, route optimization, market entry analysis.</li>
+      <li><strong>EIS (Executive Information System)</strong> is designed for senior executives to monitor KPIs and strategic performance. Provides visual dashboards with drill-down capability. No complex queries — designed for non-technical executives. Examples: CEO revenue dashboard, CFO profit margin tracker.</li>
+      <li><strong>ERP (Enterprise Resource Planning)</strong> integrates ALL major business functions into one unified system with a shared database. Eliminates data silos. Key vendors: SAP, Oracle, Microsoft Dynamics. High implementation risk — Hershey's and Nike both lost hundreds of millions in botched ERP rollouts.</li>
+      <li>Matching IS to user: Cashier → TPS. Middle manager → MIS. Complex decision with uncertainty → DSS. CEO monitoring KPIs → EIS. Whole company in one system → ERP. Know this cold — every exam question gives you a user type and asks for the IS.</li>
+    </ul>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:1rem;text-align:center;">Press <kbd style="background:#334155;padding:2px 6px;border-radius:4px;">Space</kbd> or <kbd style="background:#334155;padding:2px 6px;border-radius:4px;">→</kbd> to reveal each takeaway</p>
+  </section>
+
+  <!-- SLIDE 12 — GAME TIME -->
+  <section class="slide" id="s12" aria-label="Slide 12 of 12">
+    <div class="slide-eyebrow">Chapter 10 · Game Time</div>
+    <div class="slide-title">🎮 Game Time!</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Open the <strong>MIS Journey App</strong> and play the Chapter 10 quiz<br>to lock in what you learned today</div>
+    <div class="stats-row" style="margin-top:1.5rem;">
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">Quiz questions: ERP, TPS, MIS, DSS, EIS — one per IS type</div></div>
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">Study tips pre-loaded in the app</div></div>
+      <div class="stat-box"><div class="stat-num">100%</div><div class="stat-label">Exam-relevant — IS types appear on every IS exam</div></div>
+    </div>
+    <div style="margin-top:1.5rem;text-align:center;">
+      <span class="badge badge-sky" style="font-size:0.85rem;padding:8px 20px;">Remember: TPS = transactions · MIS = reports · DSS = models · EIS = executive dashboards · ERP = all-in-one system</span>
+    </div>
+  </section>
+
+</div>
+
+<div id="controls" role="navigation" aria-label="Slide navigation">
+  <button class="ctrl-btn" id="btn-sb" onclick="toggleSB()" aria-label="Toggle scoreboard">🏆</button>
+  <button class="ctrl-btn" id="btn-print" onclick="window.print()" aria-label="Print slides">🖨</button>
+  <button class="ctrl-btn" id="btn-prev" onclick="navigate(-1)" disabled aria-label="Previous slide">← Prev</button>
+  <button class="ctrl-btn" id="btn-next" onclick="navigate(1)" aria-label="Next slide">Next →</button>
+</div>
+
+<script>
+  const TOTAL = 12; let current = 1;
+  const scores = { r: 0, b: 0, g: 0 };
+  let takeawayIdx = 0; const TAKEAWAY_SLIDE = 11;
+
+  function navigate(dir) {
+    if (current === TAKEAWAY_SLIDE && dir === 1) {
+      const items = document.querySelectorAll('#takeaways-s11 li');
+      if (takeawayIdx < items.length) { items[takeawayIdx].classList.add('show'); takeawayIdx++; return; }
+    }
+    const prev = document.getElementById('s' + current);
+    prev.classList.remove('active'); prev.classList.add('exit');
+    setTimeout(() => prev.classList.remove('exit'), 420);
+    current = Math.max(1, Math.min(TOTAL, current + dir));
+    document.getElementById('s' + current).classList.add('active');
+    updateUI();
+    if (current === TAKEAWAY_SLIDE) takeawayIdx = 0;
+  }
+
+  function updateUI() {
+    document.getElementById('slide-counter').textContent = current + ' / ' + TOTAL;
+    const pb = document.getElementById('progress-bar');
+    pb.style.width = (current / TOTAL * 100).toFixed(2) + '%';
+    pb.setAttribute('aria-valuenow', current);
+    document.getElementById('btn-prev').disabled = current === 1;
+    document.getElementById('btn-next').disabled = current === TOTAL;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); navigate(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); navigate(-1); }
+  });
+
+  function toggleSB() { const sb = document.getElementById('scoreboard'); sb.style.display = sb.style.display === 'block' ? 'none' : 'block'; }
+  function adj(team, delta) { scores[team] = Math.max(0, scores[team] + delta); document.getElementById('sc-' + team).textContent = scores[team]; }
+  function reveal(card) { card.classList.toggle('revealed'); }
+  function revealSc(card) { card.classList.toggle('revealed'); }
+
+  let timerIntervals = {};
+  function startTimer(id, seconds) {
+    if (timerIntervals[id]) clearInterval(timerIntervals[id]);
+    let remaining = seconds;
+    const el = document.getElementById(id);
+    const btn = el.nextElementSibling;
+    btn.textContent = '⏹ Stop';
+    btn.onclick = () => { clearInterval(timerIntervals[id]); btn.textContent = '▶ Restart'; btn.onclick = () => startTimer(id, seconds); };
+    function tick() {
+      const m = Math.floor(remaining / 60), s = remaining % 60;
+      el.textContent = m + ':' + String(s).padStart(2, '0');
+      if (remaining <= 0) { clearInterval(timerIntervals[id]); el.textContent = '⏱ Done!'; btn.textContent = '▶ Restart'; btn.onclick = () => startTimer(id, seconds); }
+      remaining--;
+    }
+    tick(); timerIntervals[id] = setInterval(tick, 1000);
+  }
+</script>
+</body>
+</html>

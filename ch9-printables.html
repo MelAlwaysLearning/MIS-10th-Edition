@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch 9 Printables — Student Handout &amp; Bingo | ISM3011</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Georgia, "Times New Roman", serif; background: #f0f9ff; color: #1E293B; }
+    .screen-nav { background: #1E293B; color: white; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .screen-nav h1 { font-size: 1rem; font-weight: 700; }
+    .screen-nav p { font-size: 0.8rem; color: #94A3B8; margin-top: 2px; }
+    .nav-btns { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .nav-btn { padding: 0.45rem 1rem; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; font-family: inherit; }
+    .btn-print { background: #0284C7; color: white; }
+    .btn-print:hover { background: #0369A1; }
+    .btn-back { background: transparent; border: 1px solid #475569; color: #94A3B8; }
+    .btn-back:hover { background: #334155; color: white; }
+    .print-preview { max-width: 860px; margin: 2rem auto; padding: 0 1rem 3rem; }
+    .page-label { font-family: -apple-system, sans-serif; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: #64748B; margin: 2rem 0 0.5rem; display: flex; align-items: center; gap: 0.6rem; }
+    .page-label::after { content: ''; flex: 1; height: 1px; background: #E2E8F0; }
+    .print-page { background: white; width: 100%; max-width: 780px; margin: 0 auto 1rem; padding: 0.7in 0.75in; border: 1px solid #E2E8F0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); min-height: 10.5in; }
+    .handout-header { border-bottom: 3px solid #0284C7; padding-bottom: 10px; margin-bottom: 18px; }
+    .handout-header h2 { font-size: 1.15rem; font-weight: 700; }
+    .handout-header .meta { font-size: 0.78rem; color: #475569; margin-top: 3px; }
+    .student-info { display: flex; gap: 2rem; margin-bottom: 18px; }
+    .info-field { flex: 1; }
+    .info-field label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #64748B; display: block; margin-bottom: 3px; }
+    .info-field .line { border-bottom: 1px solid #1E293B; height: 22px; }
+    .section-title { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #0369A1; margin: 18px 0 8px; border-left: 3px solid #0284C7; padding-left: 8px; }
+    p, li { font-size: 0.82rem; line-height: 1.55; }
+    .fill-blank { display: inline-block; border-bottom: 1px solid #1E293B; min-width: 120px; height: 16px; margin: 0 3px; }
+    .fill-blank-lg { display: block; border-bottom: 1px solid #1E293B; min-width: 100%; height: 16px; margin: 6px 0; }
+    .match-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin: 8px 0; }
+    .match-table th { background: #0284C7; color: white; padding: 5px 8px; text-align: left; }
+    .match-table td { border: 1px solid #CBD5E1; padding: 5px 8px; vertical-align: top; }
+    .match-table tr:nth-child(even) td { background: #F0F9FF; }
+    .terms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin: 8px 0; }
+    .term-entry .term-name { font-weight: 700; font-size: 0.8rem; color: #0369A1; }
+    .term-entry .term-line { border-bottom: 1px solid #CBD5E1; height: 14px; margin: 3px 0; }
+    .exit-ticket { border: 2px dashed #0284C7; border-radius: 10px; padding: 12px 14px; margin-top: 18px; }
+    .exit-ticket .et-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #0369A1; margin-bottom: 8px; }
+    .et-line { border-bottom: 1px solid #CBD5E1; height: 16px; margin: 6px 0; }
+    .bingo-header { text-align: center; margin-bottom: 10px; }
+    .bingo-header h2 { font-size: 1.2rem; font-weight: 800; }
+    .bingo-header .card-num { font-size: 0.8rem; color: #64748B; }
+    .bingo-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .bingo-table th { background: #0284C7; color: white; text-align: center; padding: 10px 4px; font-size: 1.2rem; font-weight: 800; border: 2px solid white; }
+    .bingo-table td { border: 2px solid #0284C7; text-align: center; padding: 5px 3px; font-size: 0.62rem; font-weight: 700; height: 1.3in; vertical-align: middle; line-height: 1.2; }
+    .bingo-table td.free { background: #DBEAFE; color: #1D4ED8; font-size: 0.75rem; font-weight: 800; }
+    .bingo-table tr:nth-child(odd) td { background: #F0F9FF; }
+    .bingo-table tr:nth-child(even) td { background: #E0F2FE; }
+    .bingo-table td.free { background: #DBEAFE !important; }
+    .call-list { columns: 2; column-gap: 1.5rem; margin: 8px 0; }
+    .call-item { font-size: 0.75rem; padding: 3px 0; border-bottom: 1px solid #E2E8F0; break-inside: avoid; }
+    .call-item .ci-term { font-weight: 700; color: #0369A1; }
+    .how-to-box { border: 1.5px solid #0284C7; border-radius: 8px; padding: 10px 12px; margin: 10px 0; font-size: 0.78rem; background: #F0F9FF; }
+    .how-to-box h3 { font-size: 0.82rem; font-weight: 700; margin-bottom: 6px; color: #0369A1; }
+    .how-to-box ol { padding-left: 1.2rem; }
+    .how-to-box li { margin-bottom: 4px; }
+    @media print {
+      .screen-nav { display: none; }
+      .print-preview { margin: 0; padding: 0; }
+      .page-label { display: none; }
+      .print-page { box-shadow: none; border: none; padding: 0.6in 0.7in; page-break-after: always; min-height: 0; margin: 0; }
+      .print-page:last-child { page-break-after: auto; }
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+<nav class="screen-nav">
+  <div>
+    <h1>Chapter 9 Printables — Social Computing</h1>
+    <p>ISM3011 | Print-ready student handout, key terms page, call list &amp; 4 Bingo cards</p>
+  </div>
+  <div class="nav-btns">
+    <button class="nav-btn btn-print" onclick="window.print()">🖨 Print All Pages</button>
+    <button class="nav-btn btn-back" onclick="window.location='index.html'">← Back to MIS Journey</button>
+  </div>
+</nav>
+
+<div class="print-preview">
+
+  <!-- PAGE 1 — STUDENT HANDOUT -->
+  <div class="page-label">Page 1 of 6 — Student Handout</div>
+  <div class="print-page" id="page1">
+    <div class="handout-header">
+      <h2>Chapter 9 Study Guide — Social Computing</h2>
+      <div class="meta">ISM3011 | Introduction to Management of Information Systems</div>
+    </div>
+    <div class="student-info">
+      <div class="info-field"><label>Name</label><div class="line"></div></div>
+      <div class="info-field"><label>Date</label><div class="line"></div></div>
+      <div class="info-field"><label>Section</label><div class="line"></div></div>
+    </div>
+
+    <div class="section-title">Part 1 — Web 1.0 vs Web 2.0</div>
+    <p>For each characteristic, mark whether it describes Web 1.0, Web 2.0, or Both.</p>
+    <table class="match-table">
+      <thead><tr><th>Characteristic</th><th>Web 1.0 / Web 2.0 / Both</th></tr></thead>
+      <tbody>
+        <tr><td>Users only read content — no ability to post, comment, or upload</td><td></td></tr>
+        <tr><td>User-generated content and two-way interactivity</td><td></td></tr>
+        <tr><td>Static, company-published HTML pages</td><td></td></tr>
+        <tr><td>Platforms like Facebook, YouTube, and Wikipedia</td><td></td></tr>
+        <tr><td>The internet exists and can be accessed by the public</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Part 2 — Fill in the Blank</div>
+    <p>Word bank: <strong>[ Web 2.0 · Crowdsourcing · Wiki · Social Networking · Social Computing · Folksonomy · Viral Marketing ]</strong></p>
+    <p style="margin-top:8px;">1. <span class="fill-blank" style="min-width:160px;"></span> is characterized by user-generated content and two-way interactivity — the "read-write" web.</p>
+    <p style="margin-top:6px;">2. <span class="fill-blank" style="min-width:160px;"></span> means obtaining work, ideas, or solutions from a large online community — not hiring a company.</p>
+    <p style="margin-top:6px;">3. A <span class="fill-blank" style="min-width:80px;"></span> is a collaborative website that anyone can edit. The most famous example is Wikipedia.</p>
+    <p style="margin-top:6px;">4. <span class="fill-blank" style="min-width:160px;"></span> sites let users create profiles, connect, and share content within a network of connections.</p>
+    <p style="margin-top:6px;">5. A <span class="fill-blank" style="min-width:130px;"></span> is a user-generated classification system created through tagging — like hashtags on social media.</p>
+    <p style="margin-top:6px;">6. <span class="fill-blank" style="min-width:160px;"></span> refers to content that spreads rapidly through social sharing — users become unpaid promoters.</p>
+
+    <div class="section-title">Part 3 — Business Application Scenarios</div>
+    <table class="match-table">
+      <thead><tr><th>Business Scenario</th><th>Social Computing Concept</th></tr></thead>
+      <tbody>
+        <tr><td>Starbucks posts a challenge: "Submit your best drink recipe — winner gets it on the menu"</td><td></td></tr>
+        <tr><td>Netflix monitors Twitter to see which of its shows fans are discussing most</td><td></td></tr>
+        <tr><td>A company's employees all edit the same internal knowledge base document</td><td></td></tr>
+        <tr><td>TikTok allows users to buy products directly in the app without leaving</td><td></td></tr>
+        <tr><td>A Dollar Shave Club YouTube video goes from 0 to 12M views in 48 hours</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Part 4 — Critical Thinking</div>
+    <p>What is the difference between <strong>crowdsourcing</strong> and <strong>outsourcing</strong>? Give one example of each.</p>
+    <div class="fill-blank-lg"></div><div class="fill-blank-lg"></div>
+    <p style="margin-top:8px;">What ethical concern arises when social platforms use an algorithm to show you only content you agree with?</p>
+    <div class="fill-blank-lg"></div><div class="fill-blank-lg"></div>
+
+    <div class="exit-ticket">
+      <div class="et-title">🎟 Exit Ticket</div>
+      <p style="font-size:0.78rem;margin-bottom:6px;">Time magazine called "You" (ordinary people) Person of the Year in 2006. What Web 2.0 developments between 2004–2006 made this true? Name at least two specific platforms or technologies and explain their impact.</p>
+      <div class="et-line"></div><div class="et-line"></div><div class="et-line"></div><div class="et-line"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 2 — KEY TERMS -->
+  <div class="page-label">Page 2 of 6 — Key Terms</div>
+  <div class="print-page" id="page2">
+    <div class="handout-header">
+      <h2>Chapter 9 — Key Terms &amp; Social Computing Summary</h2>
+      <div class="meta">ISM3011 | Define each term in your own words</div>
+    </div>
+    <div class="section-title">Key Terms — Define in Your Own Words</div>
+    <div class="terms-grid">
+      <div class="term-entry"><div class="term-name">Web 2.0</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Crowdsourcing</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Wiki</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Social Networking</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Social Computing</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Blog / Microblog</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Podcast</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">User-Generated Content</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Viral Marketing</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Social Commerce</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">RSS Feed</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Folksonomy / Tagging</div><div class="term-line"></div><div class="term-line"></div></div>
+    </div>
+    <div class="section-title">Social Computing in Business — Quick Match</div>
+    <table class="match-table">
+      <thead><tr><th>Tool / Concept</th><th>Business Application</th></tr></thead>
+      <tbody>
+        <tr><td>Social CRM</td><td></td></tr>
+        <tr><td>Internal Wiki (Confluence)</td><td></td></tr>
+        <tr><td>Crowdsourcing product ideas</td><td></td></tr>
+        <tr><td>Sentiment Analysis</td><td></td></tr>
+        <tr><td>Influencer Marketing</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGE 3 — BINGO CALL LIST -->
+  <div class="page-label">Page 3 of 6 — Bingo Call List (Professor Use)</div>
+  <div class="print-page" id="page3">
+    <div class="handout-header">
+      <h2>Chapter 9 Bingo — Call List &amp; Instructions</h2>
+      <div class="meta">ISM3011 | Read the CLUE aloud — students must identify the term on their card</div>
+    </div>
+    <div class="how-to-box">
+      <h3>How to Play</h3>
+      <ol>
+        <li>Distribute one Bingo card (pages 4–6) to each student. Cards 1–4 have different layouts.</li>
+        <li>Read the <strong>clue</strong> aloud. Do NOT read the term in parentheses.</li>
+        <li>Students mark the matching term on their card using a pen, marker, or coin.</li>
+        <li>First student to get 5-in-a-row calls "BINGO!" Verify and award a prize.</li>
+      </ol>
+    </div>
+    <p style="font-size:0.78rem;margin-bottom:6px;"><em>★ Starred terms are quiz answers — they appear on EVERY card.</em></p>
+    <div class="section-title">Call List</div>
+    <div class="call-list">
+      <div class="call-item"><span class="ci-term">Web 2.0 ★</span> — "The interactive era defined by user-generated content and two-way participation — the 'read-write' web"</div>
+      <div class="call-item"><span class="ci-term">Crowdsourcing ★</span> — "Obtaining work, ideas, or solutions from a large online community — not an outsourced company"</div>
+      <div class="call-item"><span class="ci-term">Wiki ★</span> — "A collaborative website that anyone can edit — Wikipedia is the most famous example"</div>
+      <div class="call-item"><span class="ci-term">Social Networking ★</span> — "Platforms where users create profiles, connect, and share content within a network of personal connections"</div>
+      <div class="call-item"><span class="ci-term">Social Computing ★</span> — "Using social media and online communities to benefit businesses — like crowdsourcing product ideas from customers"</div>
+      <div class="call-item"><span class="ci-term">Blog</span> — "A regularly updated website with entries in chronological order — personal or business journal format"</div>
+      <div class="call-item"><span class="ci-term">Podcast</span> — "Audio content distributed digitally via subscription using an RSS feed"</div>
+      <div class="call-item"><span class="ci-term">User-Generated Content</span> — "Content created by unpaid users — reviews, photos, videos, Wikipedia articles"</div>
+      <div class="call-item"><span class="ci-term">Viral Marketing</span> — "Content that spreads rapidly through user sharing — the Ice Bucket Challenge raised $220M this way"</div>
+      <div class="call-item"><span class="ci-term">Social Commerce</span> — "Buying products directly within social media platforms — TikTok Shop, Instagram Shopping"</div>
+      <div class="call-item"><span class="ci-term">RSS Feed</span> — "A standardized format that automatically delivers new content to subscribers — used for podcasts and news"</div>
+      <div class="call-item"><span class="ci-term">Folksonomy</span> — "A user-generated classification system created through tagging — hashtags are the most visible example"</div>
+      <div class="call-item"><span class="ci-term">Mashup</span> — "A web application that combines data from multiple sources — Google Maps + real estate listings"</div>
+      <div class="call-item"><span class="ci-term">Social Media</span> — "Platforms that enable users to create and share content and participate in social networking"</div>
+      <div class="call-item"><span class="ci-term">Hashtag</span> — "A keyword tag that organizes content on social media and creates searchable communities"</div>
+      <div class="call-item"><span class="ci-term">Influencer</span> — "A person with a large social media following who can drive purchasing decisions through recommendations"</div>
+      <div class="call-item"><span class="ci-term">Online Community</span> — "A group of people interacting around shared interests on the internet — the foundation of crowdsourcing"</div>
+      <div class="call-item"><span class="ci-term">Microblog</span> — "A short-format blog — Twitter/X is the most famous example with its character-limited posts"</div>
+      <div class="call-item"><span class="ci-term">Digital Identity</span> — "Your online presence and reputation — the sum of your profiles, posts, and activity across platforms"</div>
+      <div class="call-item"><span class="ci-term">Tagging</span> — "Adding keywords to digital content to organize and make it searchable — the building block of folksonomy"</div>
+      <div class="call-item"><span class="ci-term">Social CRM</span> — "Using social media platforms to manage and improve customer relationships"</div>
+      <div class="call-item"><span class="ci-term">Filter Bubble</span> — "An algorithmic echo chamber — you only see content that confirms what you already believe"</div>
+      <div class="call-item"><span class="ci-term">Open Source</span> — "Software with publicly available source code that anyone can view, modify, and distribute"</div>
+      <div class="call-item"><span class="ci-term">Web 1.0</span> — "The original 'read-only' web — companies published static content and users could only consume it"</div>
+      <div class="call-item"><span class="ci-term">FREE SPACE</span> — "Everyone marks the center square!"</div>
+    </div>
+  </div>
+
+  <!-- PAGE 4 — BINGO CARD 1 -->
+  <div class="page-label">Page 4 of 6 — Bingo Card 1</div>
+  <div class="print-page" id="page4">
+    <div class="bingo-header">
+      <h2>Chapter 9 Bingo &nbsp;|&nbsp; ISM3011</h2>
+      <div class="card-num">Card 1 — Social Computing</div>
+    </div>
+    <table class="bingo-table" role="grid" aria-label="Bingo card 1">
+      <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
+      <tbody>
+        <tr><td>Web 2.0</td><td>Blog</td><td>Crowdsourcing</td><td>Podcast</td><td>User-Generated Content</td></tr>
+        <tr><td>Viral Marketing</td><td>Wiki</td><td>Social Commerce</td><td>Social Networking</td><td>RSS Feed</td></tr>
+        <tr><td>Folksonomy</td><td>Social Computing</td><td class="free">★<br>FREE<br>SPACE</td><td>Mashup</td><td>Social Media</td></tr>
+        <tr><td>Hashtag</td><td>Influencer</td><td>Online Community</td><td>Microblog</td><td>Digital Identity</td></tr>
+        <tr><td>Tagging</td><td>Social CRM</td><td>Filter Bubble</td><td>Open Source</td><td>Web 1.0</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGE 5 — BINGO CARD 2 -->
+  <div class="page-label">Page 5 of 6 — Bingo Card 2</div>
+  <div class="print-page" id="page5">
+    <div class="bingo-header">
+      <h2>Chapter 9 Bingo &nbsp;|&nbsp; ISM3011</h2>
+      <div class="card-num">Card 2 — Social Computing</div>
+    </div>
+    <table class="bingo-table" role="grid" aria-label="Bingo card 2">
+      <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
+      <tbody>
+        <tr><td>Web 1.0</td><td>Social Networking</td><td>Filter Bubble</td><td>Web 2.0</td><td>Mashup</td></tr>
+        <tr><td>Digital Identity</td><td>Folksonomy</td><td>Crowdsourcing</td><td>Influencer</td><td>Social Commerce</td></tr>
+        <tr><td>Open Source</td><td>RSS Feed</td><td class="free">★<br>FREE<br>SPACE</td><td>Wiki</td><td>Hashtag</td></tr>
+        <tr><td>Social CRM</td><td>Online Community</td><td>Viral Marketing</td><td>Blog</td><td>Social Computing</td></tr>
+        <tr><td>Podcast</td><td>Tagging</td><td>Social Media</td><td>Microblog</td><td>User-Generated Content</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGE 6 — BINGO CARDS 3 & 4 -->
+  <div class="page-label">Page 6 of 6 — Bingo Cards 3 &amp; 4</div>
+  <div class="print-page" id="page6">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3in;">
+      <div>
+        <div class="bingo-header">
+          <h2 style="font-size:0.95rem;">Chapter 9 Bingo | ISM3011</h2>
+          <div class="card-num">Card 3</div>
+        </div>
+        <table class="bingo-table" role="grid" aria-label="Bingo card 3" style="font-size:0.55rem;">
+          <thead><tr><th style="font-size:0.9rem;">B</th><th style="font-size:0.9rem;">I</th><th style="font-size:0.9rem;">N</th><th style="font-size:0.9rem;">G</th><th style="font-size:0.9rem;">O</th></tr></thead>
+          <tbody>
+            <tr><td>Hashtag</td><td>Crowdsourcing</td><td>Social Media</td><td>Web 1.0</td><td>Web 2.0</td></tr>
+            <tr><td>Podcast</td><td>Filter Bubble</td><td>Social Networking</td><td>Blog</td><td>Mashup</td></tr>
+            <tr><td>Viral Marketing</td><td>Tagging</td><td class="free" style="font-size:0.6rem;">★ FREE</td><td>Wiki</td><td>Open Source</td></tr>
+            <tr><td>Social CRM</td><td>Microblog</td><td>Social Computing</td><td>RSS Feed</td><td>Influencer</td></tr>
+            <tr><td>User-Generated Content</td><td>Social Commerce</td><td>Folksonomy</td><td>Online Community</td><td>Digital Identity</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="bingo-header">
+          <h2 style="font-size:0.95rem;">Chapter 9 Bingo | ISM3011</h2>
+          <div class="card-num">Card 4</div>
+        </div>
+        <table class="bingo-table" role="grid" aria-label="Bingo card 4" style="font-size:0.55rem;">
+          <thead><tr><th style="font-size:0.9rem;">B</th><th style="font-size:0.9rem;">I</th><th style="font-size:0.9rem;">N</th><th style="font-size:0.9rem;">G</th><th style="font-size:0.9rem;">O</th></tr></thead>
+          <tbody>
+            <tr><td>Social Commerce</td><td>Digital Identity</td><td>Crowdsourcing</td><td>Folksonomy</td><td>Viral Marketing</td></tr>
+            <tr><td>RSS Feed</td><td>Web 2.0</td><td>Blog</td><td>Social Computing</td><td>Filter Bubble</td></tr>
+            <tr><td>Online Community</td><td>Social CRM</td><td class="free" style="font-size:0.6rem;">★ FREE</td><td>Social Networking</td><td>Tagging</td></tr>
+            <tr><td>User-Generated Content</td><td>Mashup</td><td>Microblog</td><td>Hashtag</td><td>Wiki</td></tr>
+            <tr><td>Open Source</td><td>Influencer</td><td>Web 1.0</td><td>Podcast</td><td>Social Media</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

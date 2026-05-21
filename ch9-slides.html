@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chapter 9: Social Computing — ISM3011 Slides</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --accent:  #0284C7; --accent2: #0369A1; --dark: #0F172A;
+      --card-bg: #1E293B; --muted: #94A3B8; --white: #F8FAFC;
+    }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--dark); color: var(--white); height: 100vh; overflow: hidden; }
+    #progress-bar { position: fixed; top: 0; left: 0; height: 4px; background: var(--accent); transition: width 0.4s ease; z-index: 200; }
+    #slide-counter { position: fixed; top: 12px; right: 16px; z-index: 200; font-size: 0.78rem; color: var(--muted); font-weight: 600; background: rgba(15,23,42,0.7); padding: 4px 10px; border-radius: 20px; }
+    #scoreboard { position: fixed; top: 12px; left: 16px; z-index: 200; background: rgba(15,23,42,0.85); border: 1px solid #334155; border-radius: 12px; padding: 10px 14px; min-width: 160px; display: none; }
+    #scoreboard h3 { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin-bottom: 6px; }
+    .score-row { display: flex; justify-content: space-between; align-items: center; margin: 4px 0; }
+    .score-val { font-weight: 800; color: var(--accent); font-size: 0.9rem; }
+    .score-btn { background: none; border: none; cursor: pointer; font-size: 0.9rem; padding: 0 2px; }
+    #controls { position: fixed; bottom: 16px; right: 16px; z-index: 200; display: flex; gap: 8px; align-items: center; }
+    .ctrl-btn { background: rgba(30,41,59,0.9); border: 1px solid #334155; color: var(--white); padding: 8px 16px; border-radius: 8px; font-size: 0.85rem; cursor: pointer; font-weight: 600; transition: all 0.2s; }
+    .ctrl-btn:hover { background: var(--accent); border-color: var(--accent); }
+    .ctrl-btn:disabled { opacity: 0.35; cursor: default; }
+    #slides-wrap { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+    .slide { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 3rem 5vw 4rem; opacity: 0; transform: translateX(60px); transition: opacity 0.4s ease, transform 0.4s ease; pointer-events: none; }
+    .slide.active { opacity: 1; transform: translateX(0); pointer-events: all; }
+    .slide.exit { opacity: 0; transform: translateX(-60px); }
+    .slide-eyebrow { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.15em; color: var(--accent); font-weight: 700; margin-bottom: 0.6rem; text-align: center; }
+    .slide-title { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 900; text-align: center; line-height: 1.15; margin-bottom: 1rem; }
+    .slide-sub { font-size: clamp(0.9rem, 2vw, 1.15rem); color: var(--muted); text-align: center; max-width: 700px; line-height: 1.55; }
+    .accent-line { width: 60px; height: 4px; background: var(--accent); border-radius: 2px; margin: 0.8rem auto 1.2rem; }
+    .cards-row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1.2rem; width: 100%; max-width: 1000px; }
+    .flip-card { background: var(--card-bg); border: 1px solid #334155; border-radius: 14px; padding: 1.2rem 1.4rem; cursor: pointer; transition: all 0.25s; min-width: 170px; max-width: 220px; flex: 1; text-align: center; }
+    .flip-card:hover { border-color: var(--accent); transform: translateY(-3px); }
+    .flip-card.revealed { border-color: var(--accent); background: rgba(2,132,199,0.12); }
+    .flip-card .card-icon { font-size: 1.8rem; margin-bottom: 0.5rem; }
+    .flip-card .card-label { font-size: 0.78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted); }
+    .flip-card .card-body { font-size: 0.85rem; margin-top: 0.4rem; line-height: 1.45; display: none; }
+    .flip-card.revealed .card-body { display: block; }
+    .flip-card .card-hint { font-size: 0.72rem; color: var(--muted); margin-top: 0.6rem; }
+    .flip-card.revealed .card-hint { display: none; }
+    .stats-row { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1rem; width: 100%; max-width: 860px; }
+    .stat-box { background: var(--card-bg); border: 1px solid #334155; border-radius: 12px; padding: 1rem 1.4rem; text-align: center; flex: 1; min-width: 160px; max-width: 220px; }
+    .stat-num { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 900; color: var(--accent); }
+    .stat-label { font-size: 0.78rem; color: var(--muted); margin-top: 4px; line-height: 1.35; }
+    .scenario-cards { display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin-top: 1.2rem; max-width: 960px; }
+    .scenario-card { background: var(--card-bg); border: 1px solid #334155; border-radius: 14px; padding: 1.2rem 1.4rem; flex: 1; min-width: 200px; max-width: 280px; cursor: pointer; transition: all 0.25s; }
+    .scenario-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .scenario-card.revealed { border-color: var(--accent); }
+    .scenario-card .sc-num { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); }
+    .scenario-card .sc-q { font-size: 0.88rem; margin-top: 0.4rem; line-height: 1.45; font-weight: 600; }
+    .scenario-card .sc-a { font-size: 0.82rem; color: #7DD3FC; margin-top: 0.5rem; display: none; }
+    .scenario-card.revealed .sc-a { display: block; }
+    .scenario-card .sc-hint { font-size: 0.7rem; color: var(--muted); margin-top: 0.4rem; }
+    .scenario-card.revealed .sc-hint { display: none; }
+    .compare-wrap { width: 100%; max-width: 820px; margin-top: 1rem; }
+    .compare-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .compare-table th { background: var(--accent); color: white; padding: 8px 14px; text-align: left; }
+    .compare-table td { border-bottom: 1px solid #334155; padding: 8px 14px; vertical-align: top; }
+    .compare-table tr:nth-child(odd) td { background: rgba(2,132,199,0.08); }
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+    .badge-sky { background: rgba(2,132,199,0.2); color: #7DD3FC; }
+    .badge-green { background: rgba(34,197,94,0.2); color: #86EFAC; }
+    .badge-amber { background: rgba(217,119,6,0.2); color: #FCD34D; }
+    .badge-red { background: rgba(220,38,38,0.2); color: #FCA5A5; }
+    .takeaway-list { list-style: none; max-width: 760px; width: 100%; margin-top: 1rem; }
+    .takeaway-list li { background: var(--card-bg); border-left: 4px solid var(--accent); padding: 0.75rem 1rem; border-radius: 0 8px 8px 0; margin-bottom: 0.6rem; font-size: clamp(0.82rem, 1.6vw, 0.98rem); line-height: 1.45; opacity: 0; transform: translateX(20px); transition: opacity 0.35s, transform 0.35s; }
+    .takeaway-list li.show { opacity: 1; transform: translateX(0); }
+    .timer-wrap { margin-top: 1.2rem; text-align: center; }
+    .timer-display { font-size: 2.5rem; font-weight: 900; color: var(--accent); font-variant-numeric: tabular-nums; line-height: 1; }
+    .timer-btn { margin-top: 0.6rem; background: var(--accent); color: white; border: none; padding: 10px 28px; border-radius: 8px; font-size: 0.9rem; font-weight: 700; cursor: pointer; }
+    .timer-btn:hover { background: var(--accent2); }
+  </style>
+</head>
+<body>
+
+<div id="progress-bar" style="width:8.33%;" role="progressbar" aria-valuenow="1" aria-valuemin="1" aria-valuemax="12" aria-label="Slide progress"></div>
+<div id="slide-counter" aria-live="polite">1 / 12</div>
+
+<div id="scoreboard" aria-label="Team scoreboard">
+  <h3>🏆 Scoreboard</h3>
+  <div class="score-row"><span>🔴 Team Red</span><div style="display:flex;align-items:center;gap:4px;"><button class="score-btn" onclick="adj('r',-1)">−</button><span class="score-val" id="sc-r">0</span><button class="score-btn" onclick="adj('r',1)">+</button></div></div>
+  <div class="score-row"><span>🔵 Team Blue</span><div style="display:flex;align-items:center;gap:4px;"><button class="score-btn" onclick="adj('b',-1)">−</button><span class="score-val" id="sc-b">0</span><button class="score-btn" onclick="adj('b',1)">+</button></div></div>
+  <div class="score-row"><span>🟢 Team Green</span><div style="display:flex;align-items:center;gap:4px;"><button class="score-btn" onclick="adj('g',-1)">−</button><span class="score-val" id="sc-g">0</span><button class="score-btn" onclick="adj('g',1)">+</button></div></div>
+</div>
+
+<div id="slides-wrap" aria-live="polite" aria-atomic="true">
+
+  <!-- SLIDE 1 — HOOK -->
+  <section class="slide active" id="s1" aria-label="Slide 1 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Hook</div>
+    <div class="slide-title">You Are the Content</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">In 2004, you consumed the internet. By 2024, you ARE the internet. Social computing flipped the web from a library you read to a platform you build. This chapter explains how — and why businesses care.</div>
+    <div class="stats-row" style="margin-top:1.4rem;">
+      <div class="stat-box"><div class="stat-num">5.2B</div><div class="stat-label">Social media users worldwide — 64% of the global population</div></div>
+      <div class="stat-box"><div class="stat-num">500M</div><div class="stat-label">Tweets sent daily — most are user-generated, not from brands</div></div>
+      <div class="stat-box"><div class="stat-num">95M</div><div class="stat-label">Photos and videos uploaded to Instagram every day — all user-generated content</div></div>
+      <div class="stat-box"><div class="stat-num">$16B</div><div class="stat-label">Value of user-generated content annually — companies pay for content you create for free</div></div>
+    </div>
+    <div class="timer-wrap" style="margin-top:1rem;">
+      <div style="font-size:0.82rem;color:var(--muted);margin-bottom:4px;">Partner activity — 60 sec: Name every platform where you created content this week (posts, comments, reviews, videos). Count them.</div>
+      <div class="timer-display" id="t1">1:00</div>
+      <button class="timer-btn" onclick="startTimer('t1',60)">▶ Start Timer</button>
+    </div>
+  </section>
+
+  <!-- SLIDE 2 — WEB 1.0 VS WEB 2.0 -->
+  <section class="slide" id="s2" aria-label="Slide 2 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Web Evolution</div>
+    <div class="slide-title">Web 1.0 vs. Web 2.0</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">The internet fundamentally changed around 2004. Click each card to understand the shift — and why it matters for business.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:300px;">
+        <div class="card-icon">📄</div>
+        <div class="card-label">Web 1.0 (1991–2004)</div>
+        <div class="card-body"><strong>"Read-only" web.</strong> Companies published content; users consumed it. Static HTML pages, no user login, no comments, no interaction. Like a digital brochure or newspaper — you read it, you don't respond. Early Amazon, early CNN.com, corporate websites. <strong>Users were audience, not participants.</strong></div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:300px;">
+        <div class="card-icon">🤝</div>
+        <div class="card-label">Web 2.0 (2004–present)</div>
+        <div class="card-body"><strong>"Read-write" web — user-generated content and interactivity.</strong> Users CREATE, not just consume. Comments, reviews, uploads, social profiles, wikis, blogs. Platform companies (Facebook, YouTube, Twitter) provide the infrastructure; users fill it with content. The value of the platform grows with each user who joins — network effects. <strong>Users became the product.</strong></div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:260px;">
+        <div class="card-icon">🔑</div>
+        <div class="card-label">The Key Shift</div>
+        <div class="card-body"><strong>Web 1.0:</strong> Companies → Users (one-way broadcast)<br><br><strong>Web 2.0:</strong> Users ↔ Users (multi-directional)<br><br>The internet went from a publisher's tool to a social infrastructure. Every review you leave on Amazon, every TikTok you upload, every Wikipedia edit — that's Web 2.0 in action.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+    <div style="margin-top:1rem;text-align:center;">
+      <span class="badge badge-red">Exam Alert</span>
+      <span style="font-size:0.82rem;color:var(--muted);margin-left:8px;">Web 2.0 = <strong>user-generated content and interactivity</strong>. This is the answer. Not "faster internet" or "more websites." The defining feature is two-way participation.</span>
+    </div>
+  </section>
+
+  <!-- SLIDE 3 — CROWDSOURCING & WIKI -->
+  <section class="slide" id="s3" aria-label="Slide 3 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Key Concepts</div>
+    <div class="slide-title">Crowdsourcing &amp; Wikis</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Two of the most powerful outcomes of Web 2.0. Click each to understand the definition and real-world impact — these are guaranteed exam terms.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:300px;">
+        <div class="card-icon">👥</div>
+        <div class="card-label">Crowdsourcing</div>
+        <div class="card-body"><strong>Obtaining work, ideas, or solutions from a large online community</strong> — not a hired firm, not an internal team. The "crowd" does the work. <br><br><strong>Examples:</strong> Wikipedia (crowd writes it), LEGO Ideas (fans submit product designs), Waze (users report traffic in real time), NASA Solve (public solves science problems), Airbnb reviews, Yelp ratings. <br><br>Key distinction: <strong>crowdsourcing ≠ outsourcing.</strong> Outsourcing hires a company. Crowdsourcing taps an open community.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:300px;">
+        <div class="card-icon">📝</div>
+        <div class="card-label">Wiki</div>
+        <div class="card-body"><strong>A collaborative website that anyone can edit</strong> — content is created and maintained by the community. The most famous: <strong>Wikipedia</strong> (6.7M articles in English, written by ~300,000 active volunteer editors). <br><br>Businesses use internal wikis (Confluence, Notion) as knowledge bases — any employee can update documentation, project notes, and processes. <strong>The wiki model assumes collective editing produces better outcomes than individual authorship.</strong> Mostly correct at scale.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)" style="max-width:240px;">
+        <div class="card-icon">💡</div>
+        <div class="card-label">Business Crowdsourcing</div>
+        <div class="card-body"><strong>Crowdsourcing product ideas from customers</strong> is a key business application of social computing.<br><br>Starbucks "My Starbucks Idea" — customers submitted 150,000 ideas; company implemented 300. <br><br>Dell IdeaStorm — 20,000 ideas submitted; led to Ubuntu Linux option on laptops. <br><br>Doritos Super Bowl ads created by fans — won awards.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 4 — SOCIAL NETWORKING -->
+  <section class="slide" id="s4" aria-label="Slide 4 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Social Networks</div>
+    <div class="slide-title">Social Networking &amp; Social Media</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Social networking sites let users create and share content within a network of personal connections. Click each to understand the types and how businesses use them.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">👤</div>
+        <div class="card-label">Social Networking</div>
+        <div class="card-body"><strong>Platforms where users create profiles, connect with others, and share content within their network.</strong> The network itself is the value — who you're connected to matters as much as the content. Facebook (relationships), LinkedIn (professional network), Instagram (visual content), TikTok (short video). Each is a different type of network, but all share the core model: profile + connections + content sharing.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">📣</div>
+        <div class="card-label">Viral Marketing</div>
+        <div class="card-body">Content that spreads rapidly through social sharing — users become unpaid promoters. The Ice Bucket Challenge raised $220M for ALS. Dollar Shave Club's first YouTube video cost $4,500 to make and led to a $1B acquisition by Unilever. <strong>Viral reach is exponential, not linear:</strong> 1 person shares with 10 → each shares with 10 → 100 → 1,000 → 10,000. No ad budget can replicate organic virality.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🛒</div>
+        <div class="card-label">Social Commerce</div>
+        <div class="card-body">Buying products directly within social media platforms. Instagram Shopping, TikTok Shop, Pinterest Buy Button, Facebook Marketplace. The discovery and purchase happen without leaving the app — eliminating friction. <strong>TikTok Shop: $20B+ GMV in 2023.</strong> Influencer marketing drives purchasing decisions — 49% of consumers rely on influencer recommendations. Social proof (likes, comments) increases conversion rates.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">💼</div>
+        <div class="card-label">Enterprise Social Computing</div>
+        <div class="card-body">Inside companies: Slack, Microsoft Teams, Yammer — internal social networks for collaboration. Social CRM: using social media data to understand and engage customers. Companies monitor Twitter/X for brand mentions and respond in real time. <strong>Social listening</strong> = tracking what customers say about your brand online. HR departments screen candidates' social profiles. Social data is now a core business intelligence source.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 5 — BLOGS, PODCASTS, USER-GENERATED CONTENT -->
+  <section class="slide" id="s5" aria-label="Slide 5 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Content Formats</div>
+    <div class="slide-title">The Forms of Social Content</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Web 2.0 created new content formats — each suited to different audiences and business goals. Click to explore the types the exam tests.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">✍️</div>
+        <div class="card-label">Blog</div>
+        <div class="card-body">A <strong>website updated regularly with personal or organizational content</strong> — usually in chronological order with comments enabled. Individuals: personal diaries, opinion, tutorials. Businesses: thought leadership, SEO content, product announcements. <strong>Microblog</strong> = shorter format — Twitter/X is the canonical example (originally 140-character posts). WordPress powers 43% of all websites on the internet.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🎙️</div>
+        <div class="card-label">Podcast</div>
+        <div class="card-body"><strong>Audio content distributed digitally via subscription (RSS feed).</strong> Listeners subscribe and automatically receive new episodes. 504 million podcast listeners worldwide. Businesses use podcasts for thought leadership, customer education, and brand awareness. <strong>RSS (Really Simple Syndication)</strong> is the underlying technology — it's a standardized feed format that automatically delivers new content to subscribers.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🎬</div>
+        <div class="card-label">User-Generated Content</div>
+        <div class="card-body"><strong>Any content created by unpaid users rather than companies.</strong> Reviews (Amazon, Yelp, Google), photos (Instagram, Flickr), videos (YouTube, TikTok), articles (Wikipedia, Reddit), Q&amp;A (Quora, Stack Overflow). UGC is more trusted than brand content — 92% of consumers trust peer reviews over advertising. <strong>Amazon's review system is arguably its most valuable competitive asset</strong> — competitors can't buy that trust.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🔖</div>
+        <div class="card-label">Tagging &amp; Folksonomy</div>
+        <div class="card-body">Users organize content by adding <strong>tags</strong> (keywords) — #travel, #recipe, #FYP. A <strong>folksonomy</strong> is the collective classification system that emerges from user tagging — no librarian needed. Hashtags are the most visible example: #BlackLivesMatter, #MeToo movements were organized entirely through user-driven tagging. Pinterest, Tumblr, and Instagram discovery all rely on tag-based folksonomy to connect content to interested users.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 6 — TEAM CHALLENGE -->
+  <section class="slide" id="s6" aria-label="Slide 6 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Team Competition</div>
+    <div class="slide-title">Social Computing Challenge</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">2 points per correct answer. Identify the social computing concept in each scenario.</div>
+    <div class="scenario-cards" style="margin-top:1.2rem;">
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 1</div>
+        <div class="sc-q">An electronics company posts a challenge: "Design our next product. Best concept gets built and the designer earns 5% royalties." 80,000 people submit ideas. Which social computing concept is this? Why is it different from outsourcing?</div>
+        <div class="sc-a">Crowdsourcing. The company taps an open, voluntary online community — not a hired firm. Outsourcing contracts a specific external company with defined deliverables and payment. Crowdsourcing is open-ended: anyone can participate, the company picks the best result, and most contributors receive nothing. Key advantage: thousands of ideas for a fraction of the cost of internal R&D.</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 2</div>
+        <div class="sc-q">A professor assigns a group project where students must write and collaboratively edit a shared document — anyone in the class can make changes, add citations, and correct errors. What Web 2.0 technology does this best resemble? What is the most famous real-world example?</div>
+        <div class="sc-a">A wiki — a collaborative website (or document) that anyone in the group can edit. The most famous real-world example is Wikipedia: 6.7 million articles written by ~300,000 active volunteer editors, maintained entirely through community editing. The assumption is that collective editing produces better accuracy than individual authorship, which has proven largely correct at Wikipedia's scale.</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 3</div>
+        <div class="sc-q">You scroll TikTok and see a video from a creator you follow demonstrating a skincare product. You click the link in the caption and buy it directly within the app. Name two social computing concepts this transaction involves.</div>
+        <div class="sc-a">1) Social Commerce — purchasing a product directly within a social media platform without leaving the app. 2) User-Generated Content / Influencer Marketing — the creator's video is UGC; their recommendation is influencer marketing. The combination of social proof (views, likes) + seamless in-app purchase eliminates the friction that kills most e-commerce conversions. TikTok Shop was built specifically around this model.</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+      <div class="scenario-card" onclick="revealSc(this)" tabindex="0" onkeydown="if(event.key==='Enter')revealSc(this)">
+        <div class="sc-num">Scenario 4</div>
+        <div class="sc-q">In 2006, Time magazine's Person of the Year was "You" — with a mirror on the cover. What concept does this represent? What changed between 1995 and 2006 that made this true?</div>
+        <div class="sc-a">Web 2.0 and user-generated content. In 1995 (Web 1.0), the internet was a read-only medium — companies published, users consumed. By 2006, YouTube (founded 2005), Facebook (2004), Flickr (2004), and Wikipedia (2001) had transformed the internet into a participatory platform. Users became the primary content creators. Time's choice recognized that the "crowd" — ordinary people — had become the most powerful force shaping digital culture.</div>
+        <div class="sc-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 7 — SOCIAL CRM & BUSINESS IMPACT -->
+  <section class="slide" id="s7" aria-label="Slide 7 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Business Impact</div>
+    <div class="slide-title">Social Computing in Business</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Social computing isn't just consumer entertainment — it's a business intelligence platform. Click each to see how companies harness social data.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">📊</div>
+        <div class="card-label">Social CRM</div>
+        <div class="card-body"><strong>Using social media platforms to manage customer relationships.</strong> Track brand mentions, respond to complaints publicly, identify brand ambassadors, engage with feedback in real time. Zappos built its brand on Twitter customer service — responding to every tweet within 60 seconds. <strong>A negative tweet seen by 1,000 followers is a customer service emergency.</strong> Social CRM turns social listening into customer retention strategy.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">📈</div>
+        <div class="card-label">Social Analytics</div>
+        <div class="card-body">Every like, share, comment, and hashtag is data. Companies use <strong>sentiment analysis</strong> (AI that reads the emotional tone of text) to gauge public opinion. Stock traders monitor Twitter for earnings rumors. Political campaigns A/B test messages on social platforms. Netflix analyzes social conversations to decide which shows to renew. <strong>Social data has become a leading indicator</strong> — companies react to social signals before traditional market research catches up.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🏗️</div>
+        <div class="card-label">Internal Collaboration</div>
+        <div class="card-body">Slack, Microsoft Teams, Yammer = internal social networks. Employees share knowledge, collaborate on projects, and reduce email. IBM's internal wiki has over 1 million pages maintained by employees. <strong>Collaboration 2.0:</strong> instead of emailing a document back and forth, teams work simultaneously in Google Docs (a wiki-like model). Enterprise social tools reduce time-to-information and break down departmental silos.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">⚠️</div>
+        <div class="card-label">Risks of Social Computing</div>
+        <div class="card-body"><strong>Misinformation:</strong> false content spreads faster than corrections. <strong>Privacy:</strong> social platforms harvest behavioral data on a massive scale. <strong>Reputation risk:</strong> a brand crisis can go viral in minutes — United Airlines lost $1.4B in market cap in 24 hours after a viral passenger video. <strong>Productivity loss:</strong> employees spend 2.5 hours/day on social media at work. <strong>Legal:</strong> employee social posts can create corporate liability.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 8 — COMPARISON TABLE -->
+  <section class="slide" id="s8" aria-label="Slide 8 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Quick Reference</div>
+    <div class="slide-title">Social Computing Concepts at a Glance</div>
+    <div class="accent-line"></div>
+    <div class="compare-wrap">
+      <table class="compare-table">
+        <thead>
+          <tr><th>Concept</th><th>Definition</th><th>Key Example</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Web 2.0</strong></td><td>User-generated content &amp; two-way interactivity — the read/write web</td><td>Facebook, YouTube, Wikipedia (2004+)</td></tr>
+          <tr><td><strong>Crowdsourcing</strong></td><td>Obtaining work/ideas from a large online community (not outsourcing)</td><td>Wikipedia, Waze, LEGO Ideas</td></tr>
+          <tr><td><strong>Wiki</strong></td><td>A collaborative website anyone can edit</td><td>Wikipedia, Confluence, Notion</td></tr>
+          <tr><td><strong>Social Networking</strong></td><td>Platforms for creating profiles, connecting, and sharing content within a network</td><td>Facebook, LinkedIn, Instagram</td></tr>
+          <tr><td><strong>Blog / Microblog</strong></td><td>Regularly updated online journal; microblog = short format</td><td>WordPress blogs; Twitter/X microblogs</td></tr>
+          <tr><td><strong>Social Commerce</strong></td><td>Buying products directly within social media platforms</td><td>TikTok Shop, Instagram Shopping</td></tr>
+          <tr><td><strong>RSS Feed</strong></td><td>Standardized format that delivers new content automatically to subscribers</td><td>Podcast delivery, news feeds</td></tr>
+          <tr><td><strong>Folksonomy</strong></td><td>Classification system created by users through tagging (not experts)</td><td>Hashtags, Pinterest boards</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- SLIDE 9 — PRIVACY & ETHICS -->
+  <section class="slide" id="s9" aria-label="Slide 9 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Ethics</div>
+    <div class="slide-title">The Dark Side of Social Computing</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Every social platform is simultaneously a community tool and a surveillance machine. Click each card to examine the ethical tensions.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🎭</div>
+        <div class="card-label">Filter Bubbles</div>
+        <div class="card-body">Social algorithms show you content you're most likely to engage with — which means content that confirms what you already believe. Over time, you see less of what challenges you and more of what confirms you. <strong>Filter bubbles:</strong> personalized information environments that reinforce existing beliefs and limit exposure to diverse perspectives. Political polarization, conspiracy theories, and radicalization pipelines all trace back partly to algorithmic filter bubbles.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🔐</div>
+        <div class="card-label">Data Harvesting</div>
+        <div class="card-body">Facebook's business model: give users a free platform; sell their behavioral data to advertisers. Every post, like, click, and share is logged. Facebook knows your politics, relationships, health concerns, and buying intent. <strong>Cambridge Analytica</strong> harvested 87 million Facebook profiles to influence the 2016 US election. "If the product is free, you are the product" — social platforms monetize attention and behavioral data, not the service itself.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">⚡</div>
+        <div class="card-label">Misinformation Speed</div>
+        <div class="card-body">A 2018 MIT study found false news spreads <strong>6× faster</strong> on Twitter than true news. False information is more novel and emotionally engaging — algorithms reward engagement, not accuracy. COVID-19 misinformation killed people. <strong>The social platform's incentive (maximize engagement) directly conflicts with society's need for accurate information.</strong> No platform has solved this without accepting significant revenue losses.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">💼</div>
+        <div class="card-label">Corporate Risk</div>
+        <div class="card-body">A single employee tweet can trigger a corporate crisis. <strong>United Airlines' viral video (2017):</strong> customer dragged off a plane → $1.4B market cap lost in 24 hours. <strong>Amy's Baking Company (2013):</strong> owners responded aggressively to critics on Facebook — the meltdown went viral and the business closed. <strong>Social media is a permanent, public record.</strong> Corporate communications policies must account for every employee as a potential brand spokesperson.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 10 — WEB 3.0 -->
+  <section class="slide" id="s10" aria-label="Slide 10 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Future</div>
+    <div class="slide-title">What Comes After Web 2.0?</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Web 3.0 is emerging — characterized by AI personalization, decentralization, and the semantic web. Click to see what's next.</div>
+    <div class="cards-row" style="margin-top:1.2rem;">
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🧠</div>
+        <div class="card-label">AI-Curated Content</div>
+        <div class="card-body">TikTok's algorithm (a Web 3.0 precursor) shows you content from strangers — not your social connections — based purely on predicted interest. You don't need to "follow" anyone. The AI models your preferences in real time. Result: TikTok users spend 95 minutes/day on the app — the most of any social platform. <strong>The algorithm knows you better than your friends do.</strong> This is where all social platforms are heading.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🔗</div>
+        <div class="card-label">Decentralization</div>
+        <div class="card-body">Web 2.0's platforms are owned by corporations (Meta, Google, Twitter/X). <strong>Web 3.0 / blockchain</strong> proposes decentralized platforms owned by users via tokens — no single company controls the data. Mastodon (decentralized Twitter), Lens Protocol (decentralized social graph). The promise: users own their data, content, and following list. The reality: complex, slow, and hard to use. Mass adoption remains elusive as of 2024.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🌐</div>
+        <div class="card-label">Semantic Web</div>
+        <div class="card-body">The web currently is made for humans to read, not machines to understand. The <strong>semantic web</strong> adds machine-readable data — computers can understand the meaning of content, not just the keywords. Google's Knowledge Graph, ChatGPT's ability to answer follow-up questions, and smart assistants that understand context are early implementations. The semantic web makes search smarter and enables AI agents to take actions on your behalf online.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+      <div class="flip-card" onclick="reveal(this)" tabindex="0" onkeydown="if(event.key==='Enter')reveal(this)">
+        <div class="card-icon">🥽</div>
+        <div class="card-label">The Metaverse</div>
+        <div class="card-body">An immersive, persistent virtual world where users interact via avatars. Social computing in 3D. Meta (formerly Facebook) invested $36B+ in metaverse development. <strong>Current reality:</strong> adoption is slow — Quest VR headsets sold ~20M units vs. smartphones' 6.9B. But enterprise metaverse (virtual meetings, training simulations, digital twins) is growing faster than consumer adoption. The technology is ahead of the behavior change required.</div>
+        <div class="card-hint">Click to reveal</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SLIDE 11 — KEY TAKEAWAYS -->
+  <section class="slide" id="s11" aria-label="Slide 11 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Takeaways</div>
+    <div class="slide-title">What You Must Know</div>
+    <div class="accent-line"></div>
+    <ul class="takeaway-list" id="takeaways-s11">
+      <li><strong>Web 2.0</strong> = user-generated content and interactivity. The defining feature is TWO-WAY participation — users create, not just consume. Not "faster speeds" or "more websites." Web 1.0 was read-only; Web 2.0 is read-write.</li>
+      <li><strong>Crowdsourcing</strong> = obtaining work, ideas, or solutions from a large online community. NOT the same as outsourcing (which hires a company). Wikipedia, Waze, LEGO Ideas, and NASA Solve are crowdsourcing. Crowdsourcing product ideas from customers is a key social computing business application.</li>
+      <li><strong>Wiki</strong> = a collaborative website that anyone can edit. Wikipedia is the canonical example. Businesses use internal wikis (Confluence, Notion) as knowledge bases. The model assumes collective editing produces better results than individual authorship.</li>
+      <li><strong>Social networking</strong> = platforms where users create profiles, connect with others, and share content within a network. Value grows with each new user (network effects). Facebook, LinkedIn, Instagram, TikTok all qualify — each with different content types and network structures.</li>
+      <li><strong>Social computing in business:</strong> crowdsourcing product ideas, social CRM (monitoring brand mentions, responding publicly), social commerce (TikTok Shop), social analytics (sentiment analysis), and internal collaboration tools (Slack, Teams).</li>
+      <li>Risks: filter bubbles (algorithmic echo chambers), data harvesting (behavioral data sold to advertisers), misinformation spreading 6× faster than truth, and corporate reputation risk from viral negative content. Social platforms' incentive (engagement) conflicts with societal needs (accuracy).</li>
+    </ul>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:1rem;text-align:center;">Press <kbd style="background:#334155;padding:2px 6px;border-radius:4px;">Space</kbd> or <kbd style="background:#334155;padding:2px 6px;border-radius:4px;">→</kbd> to reveal each takeaway</p>
+  </section>
+
+  <!-- SLIDE 12 — GAME TIME -->
+  <section class="slide" id="s12" aria-label="Slide 12 of 12">
+    <div class="slide-eyebrow">Chapter 9 · Game Time</div>
+    <div class="slide-title">🎮 Game Time!</div>
+    <div class="accent-line"></div>
+    <div class="slide-sub">Open the <strong>MIS Journey App</strong> and play the Chapter 9 quiz<br>to lock in what you learned today</div>
+    <div class="stats-row" style="margin-top:1.5rem;">
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">Quiz questions: Web 2.0, crowdsourcing, wikis, social networking, social computing in business</div></div>
+      <div class="stat-box"><div class="stat-num">5</div><div class="stat-label">Study tips pre-loaded in the app</div></div>
+      <div class="stat-box"><div class="stat-num">100%</div><div class="stat-label">Exam-relevant — social computing is a core IS topic</div></div>
+    </div>
+    <div style="margin-top:1.5rem;text-align:center;">
+      <span class="badge badge-sky" style="font-size:0.85rem;padding:8px 20px;">Remember: Web 2.0 = UGC · Crowdsourcing ≠ Outsourcing · Wiki = anyone can edit · Social networking = profile + connections + content</span>
+    </div>
+  </section>
+
+</div>
+
+<div id="controls" role="navigation" aria-label="Slide navigation">
+  <button class="ctrl-btn" id="btn-sb" onclick="toggleSB()" aria-label="Toggle scoreboard">🏆</button>
+  <button class="ctrl-btn" id="btn-print" onclick="window.print()" aria-label="Print slides">🖨</button>
+  <button class="ctrl-btn" id="btn-prev" onclick="navigate(-1)" disabled aria-label="Previous slide">← Prev</button>
+  <button class="ctrl-btn" id="btn-next" onclick="navigate(1)" aria-label="Next slide">Next →</button>
+</div>
+
+<script>
+  const TOTAL = 12; let current = 1;
+  const scores = { r: 0, b: 0, g: 0 };
+  let takeawayIdx = 0; const TAKEAWAY_SLIDE = 11;
+
+  function navigate(dir) {
+    if (current === TAKEAWAY_SLIDE && dir === 1) {
+      const items = document.querySelectorAll('#takeaways-s11 li');
+      if (takeawayIdx < items.length) { items[takeawayIdx].classList.add('show'); takeawayIdx++; return; }
+    }
+    const prev = document.getElementById('s' + current);
+    prev.classList.remove('active'); prev.classList.add('exit');
+    setTimeout(() => prev.classList.remove('exit'), 420);
+    current = Math.max(1, Math.min(TOTAL, current + dir));
+    document.getElementById('s' + current).classList.add('active');
+    updateUI();
+    if (current === TAKEAWAY_SLIDE) takeawayIdx = 0;
+  }
+
+  function updateUI() {
+    document.getElementById('slide-counter').textContent = current + ' / ' + TOTAL;
+    const pb = document.getElementById('progress-bar');
+    pb.style.width = (current / TOTAL * 100).toFixed(2) + '%';
+    pb.setAttribute('aria-valuenow', current);
+    document.getElementById('btn-prev').disabled = current === 1;
+    document.getElementById('btn-next').disabled = current === TOTAL;
+  }
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); navigate(1); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); navigate(-1); }
+  });
+
+  function toggleSB() { const sb = document.getElementById('scoreboard'); sb.style.display = sb.style.display === 'block' ? 'none' : 'block'; }
+  function adj(team, delta) { scores[team] = Math.max(0, scores[team] + delta); document.getElementById('sc-' + team).textContent = scores[team]; }
+  function reveal(card) { card.classList.toggle('revealed'); }
+  function revealSc(card) { card.classList.toggle('revealed'); }
+
+  let timerIntervals = {};
+  function startTimer(id, seconds) {
+    if (timerIntervals[id]) clearInterval(timerIntervals[id]);
+    let remaining = seconds;
+    const el = document.getElementById(id);
+    const btn = el.nextElementSibling;
+    btn.textContent = '⏹ Stop';
+    btn.onclick = () => { clearInterval(timerIntervals[id]); btn.textContent = '▶ Restart'; btn.onclick = () => startTimer(id, seconds); };
+    function tick() {
+      const m = Math.floor(remaining / 60), s = remaining % 60;
+      el.textContent = m + ':' + String(s).padStart(2, '0');
+      if (remaining <= 0) { clearInterval(timerIntervals[id]); el.textContent = '⏱ Done!'; btn.textContent = '▶ Restart'; btn.onclick = () => startTimer(id, seconds); }
+      remaining--;
+    }
+    tick(); timerIntervals[id] = setInterval(tick, 1000);
+  }
+</script>
+</body>
+</html>

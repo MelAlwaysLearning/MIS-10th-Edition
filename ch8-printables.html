@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ch 8 Printables — Student Handout &amp; Bingo | ISM3011</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: Georgia, "Times New Roman", serif; background: #f0f9ff; color: #1E293B; }
+    .screen-nav { background: #1E293B; color: white; padding: 1rem 2rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+    .screen-nav h1 { font-size: 1rem; font-weight: 700; }
+    .screen-nav p { font-size: 0.8rem; color: #94A3B8; margin-top: 2px; }
+    .nav-btns { display: flex; gap: 0.6rem; flex-wrap: wrap; }
+    .nav-btn { padding: 0.45rem 1rem; border-radius: 8px; font-size: 0.82rem; font-weight: 700; cursor: pointer; border: none; transition: all 0.2s; font-family: inherit; }
+    .btn-print { background: #0284C7; color: white; }
+    .btn-print:hover { background: #0369A1; }
+    .btn-back { background: transparent; border: 1px solid #475569; color: #94A3B8; }
+    .btn-back:hover { background: #334155; color: white; }
+    .print-preview { max-width: 860px; margin: 2rem auto; padding: 0 1rem 3rem; }
+    .page-label { font-family: -apple-system, sans-serif; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.1em; color: #64748B; margin: 2rem 0 0.5rem; display: flex; align-items: center; gap: 0.6rem; }
+    .page-label::after { content: ''; flex: 1; height: 1px; background: #E2E8F0; }
+    .print-page { background: white; width: 100%; max-width: 780px; margin: 0 auto 1rem; padding: 0.7in 0.75in; border: 1px solid #E2E8F0; box-shadow: 0 2px 12px rgba(0,0,0,0.06); min-height: 10.5in; }
+    .handout-header { border-bottom: 3px solid #0284C7; padding-bottom: 10px; margin-bottom: 18px; }
+    .handout-header h2 { font-size: 1.15rem; font-weight: 700; }
+    .handout-header .meta { font-size: 0.78rem; color: #475569; margin-top: 3px; }
+    .student-info { display: flex; gap: 2rem; margin-bottom: 18px; }
+    .info-field { flex: 1; }
+    .info-field label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: #64748B; display: block; margin-bottom: 3px; }
+    .info-field .line { border-bottom: 1px solid #1E293B; height: 22px; }
+    .section-title { font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #0369A1; margin: 18px 0 8px; border-left: 3px solid #0284C7; padding-left: 8px; }
+    p, li { font-size: 0.82rem; line-height: 1.55; }
+    .fill-blank { display: inline-block; border-bottom: 1px solid #1E293B; min-width: 120px; height: 16px; margin: 0 3px; }
+    .fill-blank-lg { display: block; border-bottom: 1px solid #1E293B; min-width: 100%; height: 16px; margin: 6px 0; }
+    .match-table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin: 8px 0; }
+    .match-table th { background: #0284C7; color: white; padding: 5px 8px; text-align: left; }
+    .match-table td { border: 1px solid #CBD5E1; padding: 5px 8px; vertical-align: top; }
+    .match-table tr:nth-child(even) td { background: #F0F9FF; }
+    .terms-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 20px; margin: 8px 0; }
+    .term-entry .term-name { font-weight: 700; font-size: 0.8rem; color: #0369A1; }
+    .term-entry .term-line { border-bottom: 1px solid #CBD5E1; height: 14px; margin: 3px 0; }
+    .exit-ticket { border: 2px dashed #0284C7; border-radius: 10px; padding: 12px 14px; margin-top: 18px; }
+    .exit-ticket .et-title { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #0369A1; margin-bottom: 8px; }
+    .et-line { border-bottom: 1px solid #CBD5E1; height: 16px; margin: 6px 0; }
+    .bingo-header { text-align: center; margin-bottom: 10px; }
+    .bingo-header h2 { font-size: 1.2rem; font-weight: 800; }
+    .bingo-header .card-num { font-size: 0.8rem; color: #64748B; }
+    .bingo-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    .bingo-table th { background: #0284C7; color: white; text-align: center; padding: 10px 4px; font-size: 1.2rem; font-weight: 800; border: 2px solid white; }
+    .bingo-table td { border: 2px solid #0284C7; text-align: center; padding: 5px 3px; font-size: 0.62rem; font-weight: 700; height: 1.3in; vertical-align: middle; line-height: 1.2; }
+    .bingo-table td.free { background: #DBEAFE; color: #1D4ED8; font-size: 0.75rem; font-weight: 800; }
+    .bingo-table tr:nth-child(odd) td { background: #F0F9FF; }
+    .bingo-table tr:nth-child(even) td { background: #E0F2FE; }
+    .bingo-table td.free { background: #DBEAFE !important; }
+    .call-list { columns: 2; column-gap: 1.5rem; margin: 8px 0; }
+    .call-item { font-size: 0.75rem; padding: 3px 0; border-bottom: 1px solid #E2E8F0; break-inside: avoid; }
+    .call-item .ci-term { font-weight: 700; color: #0369A1; }
+    .how-to-box { border: 1.5px solid #0284C7; border-radius: 8px; padding: 10px 12px; margin: 10px 0; font-size: 0.78rem; background: #F0F9FF; }
+    .how-to-box h3 { font-size: 0.82rem; font-weight: 700; margin-bottom: 6px; color: #0369A1; }
+    .how-to-box ol { padding-left: 1.2rem; }
+    .how-to-box li { margin-bottom: 4px; }
+    @media print {
+      .screen-nav { display: none; }
+      .print-preview { margin: 0; padding: 0; }
+      .page-label { display: none; }
+      .print-page { box-shadow: none; border: none; padding: 0.6in 0.7in; page-break-after: always; min-height: 0; margin: 0; }
+      .print-page:last-child { page-break-after: auto; }
+      body { background: white; }
+    }
+  </style>
+</head>
+<body>
+<nav class="screen-nav" aria-label="Page navigation">
+  <div>
+    <h1>Chapter 8 Printables — Wireless, Mobile Computing &amp; Mobile Commerce</h1>
+    <p>ISM3011 | Print-ready student handout, key terms page, call list &amp; 4 Bingo cards</p>
+  </div>
+  <div class="nav-btns">
+    <button class="nav-btn btn-print" onclick="window.print()">🖨 Print All Pages</button>
+    <button class="nav-btn btn-back" onclick="window.location='index.html'">← Back to MIS Journey</button>
+  </div>
+</nav>
+
+<div class="print-preview">
+
+  <!-- PAGE 1 — STUDENT HANDOUT -->
+  <div class="page-label">Page 1 of 6 — Student Handout</div>
+  <div class="print-page" id="page1">
+    <div class="handout-header">
+      <h2>Chapter 8 Study Guide — Wireless, Mobile Computing &amp; Mobile Commerce</h2>
+      <div class="meta">ISM3011 | Introduction to Management of Information Systems</div>
+    </div>
+    <div class="student-info">
+      <div class="info-field"><label>Name</label><div class="line"></div></div>
+      <div class="info-field"><label>Date</label><div class="line"></div></div>
+      <div class="info-field"><label>Section</label><div class="line"></div></div>
+    </div>
+
+    <div class="section-title">Part 1 — Technology Match</div>
+    <p>Match each technology to its best description. Write the letter in the blank.</p>
+    <p style="margin-top:6px;"><strong>A) RFID &nbsp; B) NFC &nbsp; C) Bluetooth &nbsp; D) Mobile Hotspot &nbsp; E) Wi-Fi &nbsp; F) 5G</strong></p>
+    <p style="margin-top:8px;">____ Uses radio waves to automatically track tagged objects — no line-of-sight, no manual scanning</p>
+    <p style="margin-top:4px;">____ Short-range (~4 cm) wireless used for tap-to-pay and contactless access</p>
+    <p style="margin-top:4px;">____ Short-range (~30m) wireless for connecting headphones, keyboards, and wearables</p>
+    <p style="margin-top:4px;">____ Shares a phone's cellular data connection with other devices via Wi-Fi</p>
+    <p style="margin-top:4px;">____ Wireless LAN technology using radio waves within a building or campus (~100m)</p>
+    <p style="margin-top:4px;">____ Next-generation cellular with 20 Gbps speeds and &lt;1ms latency</p>
+
+    <div class="section-title">Part 2 — Fill in the Blank</div>
+    <p>Complete each definition using the word bank: <strong>[ RFID · M-commerce · NFC · Bluetooth · Mobile Hotspot · IoT ]</strong></p>
+    <p style="margin-top:8px;">1. <span class="fill-blank" style="min-width:160px;"></span> stands for Radio Frequency Identification and uses radio waves to track tagged objects automatically.</p>
+    <p style="margin-top:6px;">2. <span class="fill-blank" style="min-width:160px;"></span> (Mobile Commerce) refers to e-commerce conducted via smartphones and tablets.</p>
+    <p style="margin-top:6px;">3. <span class="fill-blank" style="min-width:120px;"></span> (Near Field Communication) has a range of approximately 4 cm and is used for contactless payments.</p>
+    <p style="margin-top:6px;">4. <span class="fill-blank" style="min-width:130px;"></span> technology connects nearby devices like headphones and speakers at a range of about 30 meters.</p>
+    <p style="margin-top:6px;">5. A <span class="fill-blank" style="min-width:160px;"></span> allows you to share your phone's cellular data connection with other devices.</p>
+    <p style="margin-top:6px;">6. The <span class="fill-blank" style="min-width:60px;"></span> (Internet of Things) connects everyday objects — thermostats, cars, appliances — to the internet.</p>
+
+    <div class="section-title">Part 3 — Scenario Identification</div>
+    <table class="match-table">
+      <thead><tr><th>Scenario</th><th>Technology Used (name it)</th></tr></thead>
+      <tbody>
+        <tr><td>You tap your iPhone to a payment terminal to buy coffee</td><td style="min-width:150px;"></td></tr>
+        <tr><td>A warehouse reader logs 200 tagged items simultaneously without scanning each one</td><td></td></tr>
+        <tr><td>You connect your AirPods to your laptop</td><td></td></tr>
+        <tr><td>You create a Wi-Fi network from your phone so your laptop can access the internet on a train</td><td></td></tr>
+        <tr><td>You buy sneakers from Nike's app on your iPhone</td><td></td></tr>
+      </tbody>
+    </table>
+
+    <div class="section-title">Part 4 — Short Answer</div>
+    <p>Why does NFC have such a short range (~4 cm)? What security advantage does this provide?</p>
+    <div class="fill-blank-lg"></div>
+    <div class="fill-blank-lg"></div>
+    <p style="margin-top:8px;">What is the difference between a mobile hotspot and a public Wi-Fi hotspot (e.g., at a coffee shop)?</p>
+    <div class="fill-blank-lg"></div>
+    <div class="fill-blank-lg"></div>
+
+    <div class="exit-ticket">
+      <div class="et-title">🎟 Exit Ticket</div>
+      <p style="font-size:0.78rem;margin-bottom:6px;">5G promises speeds 100× faster than 4G and latency under 1 millisecond. Name TWO applications that become possible with 5G that were impossible or unsafe with 4G, and explain why the latency matters for each.</p>
+      <div class="et-line"></div><div class="et-line"></div><div class="et-line"></div><div class="et-line"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 2 — KEY TERMS -->
+  <div class="page-label">Page 2 of 6 — Key Terms</div>
+  <div class="print-page" id="page2">
+    <div class="handout-header">
+      <h2>Chapter 8 — Key Terms &amp; Wireless Technology Summary</h2>
+      <div class="meta">ISM3011 | Define each term in your own words</div>
+    </div>
+    <div class="section-title">Key Terms — Define in Your Own Words</div>
+    <div class="terms-grid">
+      <div class="term-entry"><div class="term-name">RFID (Radio Frequency Identification)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">NFC (Near Field Communication)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Bluetooth</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Mobile Hotspot / Tethering</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">M-commerce (Mobile Commerce)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Wi-Fi</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">5G</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">IoT (Internet of Things)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Bandwidth</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">BYOD (Bring Your Own Device)</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Digital Wallet</div><div class="term-line"></div><div class="term-line"></div></div>
+      <div class="term-entry"><div class="term-name">Wearables</div><div class="term-line"></div><div class="term-line"></div></div>
+    </div>
+
+    <div class="section-title">Wireless Technology Quick Reference</div>
+    <table class="match-table">
+      <thead><tr><th>Technology</th><th>Range</th><th>Primary Use</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td>NFC</td><td>~4 cm</td><td></td><td></td></tr>
+        <tr><td>Bluetooth</td><td>~30m</td><td></td><td></td></tr>
+        <tr><td>Wi-Fi</td><td>~100m</td><td></td><td></td></tr>
+        <tr><td>RFID (passive)</td><td>Up to 25 ft</td><td></td><td></td></tr>
+        <tr><td>Cellular (4G/5G)</td><td>Miles</td><td></td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGE 3 — BINGO CALL LIST -->
+  <div class="page-label">Page 3 of 6 — Bingo Call List (Professor Use)</div>
+  <div class="print-page" id="page3">
+    <div class="handout-header">
+      <h2>Chapter 8 Bingo — Call List &amp; Instructions</h2>
+      <div class="meta">ISM3011 | Read the CLUE aloud — students must identify the term on their card</div>
+    </div>
+    <div class="how-to-box">
+      <h3>How to Play</h3>
+      <ol>
+        <li>Distribute one Bingo card (pages 4–6) to each student. Cards 1–4 have different layouts.</li>
+        <li>Read the <strong>clue</strong> aloud. Do NOT read the term in parentheses.</li>
+        <li>Students mark the matching term on their card using a pen, marker, or coin.</li>
+        <li>First student to get 5-in-a-row calls "BINGO!" Verify and award a prize.</li>
+      </ol>
+    </div>
+    <p style="font-size:0.78rem;margin-bottom:6px;"><em>★ Starred terms are quiz answers — they appear on EVERY card.</em></p>
+    <div class="section-title">Call List</div>
+    <div class="call-list">
+      <div class="call-item"><span class="ci-term">RFID ★</span> — "Radio Frequency Identification — uses radio waves to automatically track tagged objects with no line-of-sight"</div>
+      <div class="call-item"><span class="ci-term">M-commerce ★</span> — "E-commerce conducted via smartphones or tablets — not a desktop"</div>
+      <div class="call-item"><span class="ci-term">NFC ★</span> — "Near Field Communication — the technology behind tap-to-pay; range is only about 4 centimeters"</div>
+      <div class="call-item"><span class="ci-term">Bluetooth ★</span> — "Short-range wireless that connects your headphones, keyboard, and car audio to your phone"</div>
+      <div class="call-item"><span class="ci-term">Mobile Hotspot ★</span> — "Using your phone's cellular data to create a personal Wi-Fi network for other devices"</div>
+      <div class="call-item"><span class="ci-term">Wi-Fi</span> — "Wireless LAN technology that connects devices to the internet within a building — your home router uses this"</div>
+      <div class="call-item"><span class="ci-term">3G/4G/5G</span> — "Generations of cellular networks — 5G delivers 100× faster speeds than 4G with under 1ms latency"</div>
+      <div class="call-item"><span class="ci-term">Bandwidth</span> — "The maximum data transfer rate of a connection — measured in Mbps or Gbps"</div>
+      <div class="call-item"><span class="ci-term">GPS</span> — "Global Positioning System — satellite-based location tracking used in every map and navigation app"</div>
+      <div class="call-item"><span class="ci-term">Wearables</span> — "Smart devices worn on the body — Apple Watch, Fitbit, and fitness trackers"</div>
+      <div class="call-item"><span class="ci-term">BYOD</span> — "Bring Your Own Device — employees using personal phones and laptops for work"</div>
+      <div class="call-item"><span class="ci-term">Mobile Security</span> — "Protecting smartphones from malware, phishing, and unauthorized access"</div>
+      <div class="call-item"><span class="ci-term">QR Code</span> — "A 2D barcode scanned by a phone camera to access a link, menu, or payment"</div>
+      <div class="call-item"><span class="ci-term">Cellular Network</span> — "Infrastructure of towers that provides phone calls and mobile data coverage over wide areas"</div>
+      <div class="call-item"><span class="ci-term">IoT</span> — "Internet of Things — everyday devices like thermostats, smart speakers, and cars connected to the internet"</div>
+      <div class="call-item"><span class="ci-term">Contactless Payment</span> — "Paying by tapping a card or phone — uses NFC technology underneath"</div>
+      <div class="call-item"><span class="ci-term">Mobile App</span> — "Software designed specifically to run on smartphones or tablets"</div>
+      <div class="call-item"><span class="ci-term">Digital Wallet</span> — "App that stores payment cards and IDs — Apple Pay and Google Pay are examples"</div>
+      <div class="call-item"><span class="ci-term">Radio Waves</span> — "Electromagnetic waves that carry data through the air — the foundation of ALL wireless technology"</div>
+      <div class="call-item"><span class="ci-term">WAP</span> — "Wireless Application Protocol — the early standard for accessing internet on mobile phones before smartphones"</div>
+      <div class="call-item"><span class="ci-term">Mobile Banking</span> — "Performing bank transactions — transfers, deposits, payments — through a smartphone app"</div>
+      <div class="call-item"><span class="ci-term">Tethering</span> — "Sharing your phone's internet connection with another device via USB or Bluetooth cable"</div>
+      <div class="call-item"><span class="ci-term">Wireless Network</span> — "A network that uses radio waves instead of cables to connect devices"</div>
+      <div class="call-item"><span class="ci-term">Smartphone</span> — "A mobile phone with internet access, apps, and computing capabilities — the device that enables m-commerce"</div>
+      <div class="call-item"><span class="ci-term">FREE SPACE</span> — "Everyone marks the center square!"</div>
+    </div>
+  </div>
+
+  <!-- PAGE 4 — BINGO CARD 1 -->
+  <div class="page-label">Page 4 of 6 — Bingo Card 1</div>
+  <div class="print-page" id="page4">
+    <div class="bingo-header">
+      <h2>Chapter 8 Bingo &nbsp;|&nbsp; ISM3011</h2>
+      <div class="card-num">Card 1 — Wireless, Mobile Computing &amp; Mobile Commerce</div>
+    </div>
+    <table class="bingo-table" role="grid" aria-label="Bingo card 1">
+      <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>RFID</td><td>Wi-Fi</td><td>NFC</td><td>Bandwidth</td><td>GPS</td>
+        </tr>
+        <tr>
+          <td>Wearables</td><td>Bluetooth</td><td>BYOD</td><td>Mobile Hotspot</td><td>QR Code</td>
+        </tr>
+        <tr>
+          <td>Cellular Network</td><td>M-commerce</td><td class="free">★<br>FREE<br>SPACE</td><td>IoT</td><td>Contactless Payment</td>
+        </tr>
+        <tr>
+          <td>Mobile App</td><td>Digital Wallet</td><td>Radio Waves</td><td>3G/4G/5G</td><td>WAP</td>
+        </tr>
+        <tr>
+          <td>Mobile Banking</td><td>Tethering</td><td>Wireless Network</td><td>Mobile Security</td><td>Smartphone</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGE 5 — BINGO CARD 2 -->
+  <div class="page-label">Page 5 of 6 — Bingo Card 2</div>
+  <div class="print-page" id="page5">
+    <div class="bingo-header">
+      <h2>Chapter 8 Bingo &nbsp;|&nbsp; ISM3011</h2>
+      <div class="card-num">Card 2 — Wireless, Mobile Computing &amp; Mobile Commerce</div>
+    </div>
+    <table class="bingo-table" role="grid" aria-label="Bingo card 2">
+      <thead><tr><th>B</th><th>I</th><th>N</th><th>G</th><th>O</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Smartphone</td><td>Mobile Hotspot</td><td>Contactless Payment</td><td>RFID</td><td>WAP</td>
+        </tr>
+        <tr>
+          <td>Digital Wallet</td><td>Cellular Network</td><td>GPS</td><td>Bluetooth</td><td>IoT</td>
+        </tr>
+        <tr>
+          <td>3G/4G/5G</td><td>Tethering</td><td class="free">★<br>FREE<br>SPACE</td><td>M-commerce</td><td>BYOD</td>
+        </tr>
+        <tr>
+          <td>Mobile Security</td><td>NFC</td><td>Wearables</td><td>Radio Waves</td><td>Wi-Fi</td>
+        </tr>
+        <tr>
+          <td>QR Code</td><td>Wireless Network</td><td>Bandwidth</td><td>Mobile App</td><td>Mobile Banking</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- PAGE 6 — BINGO CARDS 3 & 4 -->
+  <div class="page-label">Page 6 of 6 — Bingo Cards 3 &amp; 4</div>
+  <div class="print-page" id="page6">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.3in;">
+      <div>
+        <div class="bingo-header">
+          <h2 style="font-size:0.95rem;">Chapter 8 Bingo | ISM3011</h2>
+          <div class="card-num">Card 3</div>
+        </div>
+        <table class="bingo-table" role="grid" aria-label="Bingo card 3" style="font-size:0.55rem;">
+          <thead><tr><th style="font-size:0.9rem;">B</th><th style="font-size:0.9rem;">I</th><th style="font-size:0.9rem;">N</th><th style="font-size:0.9rem;">G</th><th style="font-size:0.9rem;">O</th></tr></thead>
+          <tbody>
+            <tr><td>QR Code</td><td>NFC</td><td>Smartphone</td><td>Mobile Banking</td><td>RFID</td></tr>
+            <tr><td>Wearables</td><td>Bandwidth</td><td>Mobile Hotspot</td><td>Wi-Fi</td><td>Contactless Payment</td></tr>
+            <tr><td>IoT</td><td>Tethering</td><td class="free" style="font-size:0.6rem;">★ FREE</td><td>Bluetooth</td><td>WAP</td></tr>
+            <tr><td>Digital Wallet</td><td>3G/4G/5G</td><td>BYOD</td><td>M-commerce</td><td>GPS</td></tr>
+            <tr><td>Mobile Security</td><td>Radio Waves</td><td>Cellular Network</td><td>Wireless Network</td><td>Mobile App</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <div class="bingo-header">
+          <h2 style="font-size:0.95rem;">Chapter 8 Bingo | ISM3011</h2>
+          <div class="card-num">Card 4</div>
+        </div>
+        <table class="bingo-table" role="grid" aria-label="Bingo card 4" style="font-size:0.55rem;">
+          <thead><tr><th style="font-size:0.9rem;">B</th><th style="font-size:0.9rem;">I</th><th style="font-size:0.9rem;">N</th><th style="font-size:0.9rem;">G</th><th style="font-size:0.9rem;">O</th></tr></thead>
+          <tbody>
+            <tr><td>Mobile App</td><td>BYOD</td><td>Bluetooth</td><td>Cellular Network</td><td>M-commerce</td></tr>
+            <tr><td>WAP</td><td>GPS</td><td>RFID</td><td>Tethering</td><td>3G/4G/5G</td></tr>
+            <tr><td>Mobile Banking</td><td>Wireless Network</td><td class="free" style="font-size:0.6rem;">★ FREE</td><td>NFC</td><td>IoT</td></tr>
+            <tr><td>Contactless Payment</td><td>Mobile Security</td><td>Wearables</td><td>Mobile Hotspot</td><td>QR Code</td></tr>
+            <tr><td>Radio Waves</td><td>Smartphone</td><td>Digital Wallet</td><td>Bandwidth</td><td>Wi-Fi</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
