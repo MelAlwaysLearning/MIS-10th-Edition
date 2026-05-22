@@ -335,18 +335,28 @@ header {
 <div class="board-tabs">
   <button class="btab active" onclick="switchBoard('w1',this)">Week 1 — Ch 1, 2, 3, 5</button>
   <button class="btab" onclick="switchBoard('w2',this)">Week 2 — Ch 4, 6, 7</button>
+  <button class="btab" onclick="switchBoard('w3',this)">Week 3 — Ch 8, 9, 10, 11</button>
   <button class="btab" onclick="switchBoard('ch4',this)">Ch 4 Only — Cybersecurity</button>
   <button class="btab" onclick="switchBoard('ch6',this)">Ch 6 Only — Networks</button>
   <button class="btab" onclick="switchBoard('ch7',this)">Ch 7 Only — E-Commerce</button>
+  <button class="btab" onclick="switchBoard('ch8',this)">Ch 8 Only — Wireless</button>
+  <button class="btab" onclick="switchBoard('ch9',this)">Ch 9 Only — Social</button>
+  <button class="btab" onclick="switchBoard('ch10',this)">Ch 10 Only — Org IS</button>
+  <button class="btab" onclick="switchBoard('ch11',this)">Ch 11 Only — CRM &amp; SCM</button>
 </div>
 <div class="board-sub" id="board-sub"></div>
 
 <!-- BOARDS -->
 <div id="board-w1" class="board"></div>
 <div id="board-w2" class="board hidden"></div>
+<div id="board-w3" class="board hidden"></div>
 <div id="board-ch4" class="board hidden"></div>
 <div id="board-ch6" class="board hidden"></div>
 <div id="board-ch7" class="board hidden"></div>
+<div id="board-ch8" class="board hidden"></div>
+<div id="board-ch9" class="board hidden"></div>
+<div id="board-ch10" class="board hidden"></div>
+<div id="board-ch11" class="board hidden"></div>
 
 <!-- QUESTION OVERLAY -->
 <div class="overlay hidden" id="q-overlay">
@@ -623,6 +633,246 @@ const BOARDS = {
         { clue:"In 2021, Facebook rebranded to Meta, betting billions that the next e-commerce frontier would be this immersive digital world.", ans:"Metaverse", dd:false }
       ]
     ]
+  },
+
+  w3: {
+    title: "Week 3 Review — Chapters 8, 9, 10, 11",
+    cats: ["WIRELESS & MOBILE","SOCIAL COMPUTING","IS HIERARCHY","CRM BASICS","SCM & JIT","CONNECT THE CHAPTERS"],
+    questions: [
+      // 200 pts
+      [
+        { clue:"RFID tags store product data. NFC is a type of RFID used for tap payments — requiring devices to be within this distance.", ans:"4 cm (tap distance)", dd:false },
+        { clue:"Web 2.0's key feature over Web 1.0: users can ___ content, not just read it.", ans:"Create / share / contribute — User-Generated Content (UGC)", dd:false },
+        { clue:"The three management levels from bottom to top that IS types serve.", ans:"Operational → Managerial → Executive", dd:false },
+        { clue:"CRM stands for ___ — its core goal is to ___.", ans:"Customer Relationship Management — manage and grow customer relationships", dd:false },
+        { clue:"JIT inventory arrives exactly when needed, eliminating excess ___.", ans:"Inventory / warehouse storage", dd:false },
+        { clue:"Connecting Ch 8 and 9: a fitness tracker automatically collects your steps — millions combined create crowdsourced health data. This data model.", ans:"Passive / implicit crowdsourcing", dd:false }
+      ],
+      // 400 pts
+      [
+        { clue:"This wireless generation promises 20 Gbps speeds, 1ms latency, and supports 1 million IoT devices per square kilometer.", ans:"5G", dd:false },
+        { clue:"InnoCentive pays prize money to problem solvers. Wikipedia relies on volunteers. Both are types of ___.", ans:"Crowdsourcing", dd:false },
+        { clue:"Cashier scans items. Manager gets weekly report. CEO views live KPI dashboard. Name the IS type for each.", ans:"TPS → MIS → EIS", dd:false },
+        { clue:"The total revenue a customer generates over their entire relationship — used to set the maximum acquisition cost.", ans:"CLV — Customer Lifetime Value", dd:false },
+        { clue:"Small consumer demand changes cause amplified order swings upstream. This SCM phenomenon.", ans:"Bullwhip Effect", dd:false },
+        { clue:"Connecting Ch 9 and 11: Starbucks' rewards app tracks every purchase to personalize offers. This combines social data with ___.", ans:"CRM — Customer Relationship Management", dd:false }
+      ],
+      // 600 pts
+      [
+        { clue:"In 2016, millions of IoT devices with weak default passwords were hijacked into a massive ___ that launched the largest DDoS attack ever recorded.", ans:"Botnet (Mirai Botnet)", dd:true },
+        { clue:"Facebook's business model in one sentence: users don't pay because they ARE the product — Facebook sells ___ to advertisers.", ans:"Targeted advertising / access to user data", dd:false },
+        { clue:"DSS answers ___ questions never asked before. MIS produces ___ scheduled reports. Key difference.", ans:"Ad hoc/unstructured questions (DSS) vs. pre-defined/structured reports (MIS)", dd:false },
+        { clue:"The three CRM lifecycle phases: acquire, ___, and ___.", ans:"Retain and Grow (upsell/cross-sell)", dd:false },
+        { clue:"Walmart shares real-time POS data with suppliers so they manage Walmart's inventory automatically. This practice.", ans:"VMI — Vendor-Managed Inventory", dd:false },
+        { clue:"Connecting Ch 8 and 11: RFID on every pallet enables real-time inventory visibility — this reduces ___.", ans:"The Bullwhip Effect / stockouts / excess safety stock", dd:false }
+      ],
+      // 800 pts
+      [
+        { clue:"Apple Pay replaces your card number with a randomized one-time code, transmitted via NFC. The security technique protecting the real number.", ans:"Tokenization", dd:false },
+        { clue:"Social media algorithms show you only content matching your beliefs — reinforcing existing views and excluding opposing ones. This phenomenon.", ans:"Filter bubble / echo chamber", dd:true },
+        { clue:"SAP and Oracle dominate this enterprise-wide system that integrates finance, HR, supply chain, and manufacturing into one shared database.", ans:"ERP — Enterprise Resource Planning", dd:false },
+        { clue:"A company spends $600 to acquire a customer who spends $100/year and stays 5 years. Calculate net CLV.", ans:"$500 revenue − $600 acquisition cost = −$100 (negative — lost money)", dd:false },
+        { clue:"Toyota's JIT means a chip shortage in Malaysia can stop car production globally. Name this JIT vulnerability.", ans:"Supply chain fragility / no safety stock buffer / single point of failure", dd:false },
+        { clue:"Connecting Ch 10 and 11: ERP integrates all company data — CRM is one ERP module. Name 3 other typical ERP modules.", ans:"Any 3 of: Finance, HR, SCM/Supply Chain, Manufacturing, Procurement, Inventory", dd:false }
+      ],
+      // 1000 pts
+      [
+        { clue:"The four wireless network types from smallest to largest — a Bluetooth link, a home Wi-Fi network, a city cellular network, and the internet.", ans:"PAN → LAN → MAN → WAN", dd:false },
+        { clue:"Name 3 dark-side risks of social computing beyond cyberbullying.", ans:"Any 3 of: misinformation/fake news, filter bubbles, privacy violations, data harvesting, addiction, social engineering, surveillance capitalism", dd:false },
+        { clue:"Why can't executives use TPS data directly? Name the specific reason EIS exists separately from TPS.", ans:"TPS is too granular (millions of raw transactions); EIS aggregates and summarizes data into the trend-oriented views executives can act on", dd:false },
+        { clue:"Name the 3 types of CRM and give one example of each.", ans:"Operational (call center/sales automation), Analytical (CLV/segmentation), Collaborative (multi-channel coordination)", dd:false },
+        { clue:"COVID exposed JIT fragility in 2 specific industries — name them and explain why JIT made them vulnerable.", ans:"Auto (chip shortage — no safety stock halted production), Healthcare (PPE stockout) — JIT eliminates buffers, so any disruption immediately stops supply", dd:false },
+        { clue:"The single technology connecting Ch 8, 9, 10, and 11 — enabling mobile transactions, social commerce, IS data collection, and CRM.", ans:"Mobile devices / smartphones / always-connected mobile technology", dd:false }
+      ]
+    ]
+  },
+
+  ch8: {
+    title: "Chapter 8 — Wireless & Mobile Computing",
+    cats: ["WIRELESS BASICS","RFID & NFC","M-COMMERCE","IoT","5G & FUTURE"],
+    questions: [
+      // 200 pts
+      [
+        { clue:"The wireless standard used in homes and offices, based on the IEEE 802.11 protocol.", ans:"Wi-Fi", dd:false },
+        { clue:"This wireless technology uses radio waves to identify tagged items without requiring line-of-sight — standard in retail inventory management.", ans:"RFID — Radio Frequency Identification", dd:false },
+        { clue:"The term for conducting commercial transactions — buying, selling, banking, or paying — using a mobile device from anywhere.", ans:"M-commerce — Mobile Commerce", dd:false },
+        { clue:"IoT stands for these three words.", ans:"Internet of Things", dd:false },
+        { clue:"5G's theoretical peak download speed, in gigabits per second.", ans:"Up to 20 Gbps", dd:false }
+      ],
+      // 400 pts
+      [
+        { clue:"This short-range wireless technology connects devices within about 10 meters — used by earbuds, keyboards, and car audio.", ans:"Bluetooth", dd:false },
+        { clue:"RFID's key advantage over barcodes: items can be scanned without this — no need to point a scanner at each individual item.", ans:"Line-of-sight", dd:false },
+        { clue:"Apple Pay and Google Pay use this very short-range wireless technology — maximum range about 4 cm — to tap and pay at terminals.", ans:"NFC — Near Field Communication", dd:false },
+        { clue:"A smart thermostat, a connected refrigerator, and a wearable fitness tracker are all examples of these.", ans:"IoT devices — Internet of Things devices", dd:false },
+        { clue:"This critical 5G metric — measured in milliseconds — must be extremely low for autonomous vehicles and remote surgery to work safely.", ans:"Latency — 5G achieves approximately 1ms", dd:false }
+      ],
+      // 600 pts
+      [
+        { clue:"A wireless network covering a metropolitan area — like city-wide wireless internet — sits between a LAN and a WAN in scale.", ans:"MAN — Metropolitan Area Network", dd:false },
+        { clue:"Privacy concern: if RFID tags are NOT deactivated at checkout, a reader outside the store can secretly scan the contents of your bag.", ans:"RFID skimming / unauthorized reading", dd:true },
+        { clue:"A store app sends a discount notification the moment you walk within 100 feet of the store. The underlying mobile location technology.", ans:"Geofencing / GPS location services", dd:false },
+        { clue:"A city that installs sensors in traffic signals, parking meters, and utilities to optimize city operations is called a ___.", ans:"Smart City", dd:false },
+        { clue:"5G can support this many IoT devices per square kilometer — compared to 4G's much smaller capacity.", ans:"Up to 1 million devices per square kilometer", dd:false }
+      ],
+      // 800 pts
+      [
+        { clue:"A hospital lets doctors access patient records from tablets over Wi-Fi. Name the security concern for wirelessly transmitted medical data.", ans:"Interception / eavesdropping — requires encryption (WPA3/HTTPS/VPN)", dd:false },
+        { clue:"Walmart required its top 100 suppliers to attach RFID to every pallet and case. The supply chain benefit Walmart sought.", ans:"Real-time inventory visibility / reduce stockouts / improve supply chain efficiency", dd:false },
+        { clue:"Apple Pay and Google Pay replace your real card number with a randomized one-time code per transaction. This security technique.", ans:"Tokenization", dd:true },
+        { clue:"In 2016, millions of IoT devices with weak default passwords were hijacked to form a massive ___ that took down Twitter, Reddit, and other major sites.", ans:"Botnet (Mirai Botnet / DDoS attack)", dd:false },
+        { clue:"The 5G feature that makes remote robotic surgery possible — a doctor in New York operating on a patient in Miami using robotic arms.", ans:"Ultra-low latency (~1ms response time)", dd:false }
+      ],
+      // 1000 pts
+      [
+        { clue:"The four main wireless network types from smallest to largest coverage area — name them in order.", ans:"PAN → LAN (Wi-Fi) → MAN (cellular/WiMAX) → WAN (internet/satellite)", dd:false },
+        { clue:"The difference between active RFID tags and passive RFID tags — which has a power source and which does not.", ans:"Active RFID has its own battery (longer range). Passive RFID has no battery — powered by the reader's signal (shorter range).", dd:false },
+        { clue:"Name 3 ways mobile advertising differs from traditional desktop advertising.", ans:"Any 3: location-based targeting, always-on access, push notifications, smaller screen UX, higher local search conversion", dd:false },
+        { clue:"The security challenge making IoT devices notoriously vulnerable — what most consumers never do after purchase.", ans:"Change default passwords / apply firmware/security updates", dd:false },
+        { clue:"Compare 4G LTE to 5G on three dimensions: peak speed, latency, and device density per square kilometer.", ans:"Speed: ~1 Gbps vs 20 Gbps | Latency: ~50ms vs ~1ms | Density: limited vs 1 million devices/km²", dd:false }
+      ]
+    ]
+  },
+
+  ch9: {
+    title: "Chapter 9 — Web 2.0 & Social Computing",
+    cats: ["WEB 2.0","CROWDSOURCING","SOCIAL NETWORKING","SOCIAL COMMERCE","DARK SIDE"],
+    questions: [
+      // 200 pts
+      [
+        { clue:"Web 1.0 was read-only static pages. Web 2.0 is defined by users being able to ___ content.", ans:"Create and share / contribute — User-Generated Content (UGC)", dd:false },
+        { clue:"The practice of outsourcing a task to a large group of people via the internet — Wikipedia is the most famous example.", ans:"Crowdsourcing", dd:false },
+        { clue:"The largest social network in the world by monthly active users.", ans:"Facebook (Meta) — approximately 3 billion users", dd:false },
+        { clue:"Amazon product ratings, Yelp reviews, and Airbnb host ratings are all examples of this social commerce feature.", ans:"User reviews / ratings / social proof", dd:false },
+        { clue:"Sending repeated cruel messages to someone using digital technology — social media, texting, or gaming platforms.", ans:"Cyberbullying", dd:false }
+      ],
+      // 400 pts
+      [
+        { clue:"This Web 2.0 site allows anyone to create and edit articles — relying on millions of volunteers to maintain accuracy.", ans:"Wikipedia", dd:false },
+        { clue:"Netflix and Amazon use ratings data from millions of users to power this system.", ans:"Recommendation engine / collaborative filtering", dd:false },
+        { clue:"LinkedIn is specifically designed for this type of networking — different from Facebook's personal focus.", ans:"Professional / business networking", dd:false },
+        { clue:"Companies pay social media accounts with large followings to post about their products. These accounts are called ___.", ans:"Influencers", dd:false },
+        { clue:"The illegal practice of creating fake profiles, fake reviews, or fake followers to appear more popular or legitimate.", ans:"Astroturfing / fake reviews / sock puppets", dd:false }
+      ],
+      // 600 pts
+      [
+        { clue:"Web 2.0 platforms let users subscribe to content updates via this XML-based feed standard — common on blogs and podcasts.", ans:"RSS — Really Simple Syndication", dd:false },
+        { clue:"Kickstarter and GoFundMe use this crowdsourcing model — individuals contribute money to fund a project or cause.", ans:"Crowdfunding", dd:true },
+        { clue:"Facebook's business model: users are the product — Facebook monetizes them by selling this to advertisers.", ans:"Targeted advertising / access to user data", dd:false },
+        { clue:"Purchasing a product directly through a social media post — without leaving the Instagram or TikTok app.", ans:"Social commerce / in-app purchasing", dd:false },
+        { clue:"Information that appears true on social media but is fabricated to deceive — spread rapidly through shares and likes.", ans:"Misinformation / fake news", dd:false }
+      ],
+      // 800 pts
+      [
+        { clue:"The key difference between a blog and a wiki — specifically who can edit the content.", ans:"Blog: controlled by one author. Wiki: anyone can edit.", dd:false },
+        { clue:"Waze collects real-time traffic data from millions of drivers automatically — without them doing anything extra. This type of crowdsourcing.", ans:"Passive / implicit crowdsourcing", dd:true },
+        { clue:"This social media phenomenon occurs when a post gains massive rapid exposure through shares and reposts — named for biological spread.", ans:"Going viral", dd:false },
+        { clue:"Facebook's Cambridge Analytica scandal: 87 million users' data harvested through a quiz app without explicit consent — used for ___.", ans:"Targeted political advertising / voter profiling", dd:false },
+        { clue:"Social media algorithms show you only content that matches your existing beliefs — reinforcing views and excluding opposing ones.", ans:"Filter bubble / echo chamber", dd:false }
+      ],
+      // 1000 pts
+      [
+        { clue:"Name 4 specific technologies or platforms that are Web 2.0 — that did NOT exist in Web 1.0's read-only era.", ans:"Any 4 of: Wikipedia, blogs, wikis, YouTube, Facebook, Twitter/X, RSS, podcasting, social bookmarking, TikTok", dd:false },
+        { clue:"Name 3 different crowdsourcing models and give one specific example of each.", ans:"Prize-based (InnoCentive), Volunteer (Wikipedia/open source), Crowdfunding (Kickstarter), Micro-task (Amazon Mechanical Turk)", dd:false },
+        { clue:"The privacy concern most users legally accept without reading when they sign up for any social media platform.", ans:"Terms of service — granting the platform rights to your data and content", dd:false },
+        { clue:"TikTok generates revenue through this primary model — NOT subscriptions — despite being free to use.", ans:"Advertising / targeted ads / data monetization", dd:false },
+        { clue:"Name 3 specific dark-side risks of social computing beyond cyberbullying.", ans:"Any 3 of: misinformation, filter bubbles, privacy violations, data harvesting, addiction, cyberstalking, social engineering, surveillance capitalism", dd:false }
+      ]
+    ]
+  },
+
+  ch10: {
+    title: "Chapter 10 — Organizational Information Systems",
+    cats: ["IS HIERARCHY","TPS","MIS & DSS","EIS & ERP","REAL SCENARIOS"],
+    questions: [
+      // 200 pts
+      [
+        { clue:"The three management levels served by IS types — from bottom to top.", ans:"Operational → Managerial → Executive", dd:false },
+        { clue:"TPS processes these at the operational level — individual exchanges like purchases, deposits, and reservations — recorded immediately.", ans:"Transactions", dd:false },
+        { clue:"MIS produces these for middle managers — typically scheduled, such as weekly sales reports or monthly inventory summaries.", ans:"Structured / scheduled reports", dd:false },
+        { clue:"ERP stands for these three words.", ans:"Enterprise Resource Planning", dd:false },
+        { clue:"A store clerk scans your items and processes your credit card. The IS type running behind every scan.", ans:"TPS — Transaction Processing System", dd:false }
+      ],
+      // 400 pts
+      [
+        { clue:"What IS type serves operational workers? What serves middle managers? What serves executives?", ans:"TPS → MIS / DSS → EIS", dd:false },
+        { clue:"This property ensures a transaction either completes FULLY or not at all — preventing partial orders or half-processed withdrawals.", ans:"Atomicity (part of ACID properties / transaction integrity)", dd:false },
+        { clue:"Unlike MIS which produces standard reports, DSS is designed to answer these types of questions.", ans:"Ad hoc / unstructured / one-time questions never asked before", dd:false },
+        { clue:"Before ERP, companies ran separate disconnected systems for finance, HR, and supply chain. ERP solves this problem.", ans:"Data silos / lack of integration / duplicate data", dd:false },
+        { clue:"A department manager receives an automatic Monday morning report showing last week's sales by product category.", ans:"MIS — Management Information System", dd:false }
+      ],
+      // 600 pts
+      [
+        { clue:"The key difference that distinguishes a DSS from an MIS — what DSS supports that MIS does not.", ans:"DSS supports ad hoc decision-making; MIS produces pre-defined scheduled reports", dd:false },
+        { clue:"Online processing vs. batch processing — explain the difference and give one example of each.", ans:"Online: real-time per transaction (ATM, POS checkout). Batch: accumulated and processed at intervals (payroll, overnight bank totals).", dd:true },
+        { clue:"A regional VP wants to model 3 different pricing scenarios and forecast the revenue impact of each. This IS type.", ans:"DSS — Decision Support System", dd:false },
+        { clue:"An executive's dashboard shows company-wide KPIs, industry benchmarks, and drill-down by region — all from one screen. This IS type.", ans:"EIS — Executive Information System", dd:false },
+        { clue:"SAP and Oracle are the two dominant vendors of this enterprise-wide IS that integrates finance, HR, supply chain, and manufacturing.", ans:"ERP — Enterprise Resource Planning", dd:false }
+      ],
+      // 800 pts
+      [
+        { clue:"The IS hierarchy maps to management levels. EIS supports strategic decisions. DSS supports tactical. TPS supports these decisions at the bottom level.", ans:"Operational decisions — day-to-day transaction processing", dd:false },
+        { clue:"TPS must process millions of transactions per second. Name 2 specific real-world systems where TPS failure would be catastrophic.", ans:"Any 2 of: stock exchange, airline reservations, ATM networks, hospital admissions, credit card processing, e-commerce checkout", dd:false },
+        { clue:"DSS uses data and analytical models plus this third component — the human element allowing managers to interact and explore scenarios.", ans:"Dialog component / user interface / manager judgment and interaction", dd:true },
+        { clue:"ERP implementation failure rates are notoriously high. The most common root cause of large ERP rollout failures.", ans:"Organizational resistance / change management failure / failure to redesign business processes before implementing technology", dd:false },
+        { clue:"A CEO reviews a live dashboard showing revenue, operating margin, and employee turnover vs. industry benchmarks — drilling from global to region to store.", ans:"EIS — Executive Information System", dd:false }
+      ],
+      // 1000 pts
+      [
+        { clue:"Why can't a company just use raw TPS data for executive decision-making — why do EIS and DSS exist as separate systems?", ans:"TPS data is too granular (millions of raw transactions); executives need aggregated, summarized, trend-oriented views that TPS was not designed to produce", dd:false },
+        { clue:"Name the 4 ACID properties that guarantee database transaction reliability.", ans:"Atomicity, Consistency, Isolation, Durability", dd:false },
+        { clue:"A company's BI platform connects to the data warehouse and lets managers build custom dashboards. Which two IS types does BI combine into one platform?", ans:"MIS (structured reporting) and DSS (ad hoc analysis) — BI platforms blur the line between them", dd:false },
+        { clue:"Name 4 functional business areas that a fully integrated ERP system connects with a shared database — eliminating silos between them.", ans:"Any 4 of: Finance/Accounting, HR, Supply Chain, Manufacturing, Sales/CRM, Procurement, Inventory", dd:false },
+        { clue:"Healthcare.gov failed spectacularly on launch day — millions couldn't register. The primary technical root cause.", ans:"Failure to load test for concurrent users / scalability failure / system not tested under realistic traffic volume", dd:false }
+      ]
+    ]
+  },
+
+  ch11: {
+    title: "Chapter 11 — CRM, SCM & Supply Chain",
+    cats: ["CRM BASICS","CLV & METRICS","SCM","JIT & BULLWHIP","REAL WORLD"],
+    questions: [
+      // 200 pts
+      [
+        { clue:"CRM stands for these three words.", ans:"Customer Relationship Management", dd:false },
+        { clue:"CLV stands for these three words — and it measures what about a customer.", ans:"Customer Lifetime Value — total revenue generated over the entire customer relationship", dd:false },
+        { clue:"SCM stands for these three words.", ans:"Supply Chain Management", dd:false },
+        { clue:"JIT stands for these two words — an inventory strategy where materials arrive exactly when needed for production.", ans:"Just-In-Time", dd:false },
+        { clue:"Amazon's 'Customers who bought this also bought ___' feature. The CRM technology powering it.", ans:"Collaborative filtering / recommendation engine", dd:false }
+      ],
+      // 400 pts
+      [
+        { clue:"CRM software stores the complete history of a customer's interactions — purchases, calls, email opens — giving any representative a ___ view.", ans:"360-degree / complete customer profile", dd:false },
+        { clue:"A customer spends $200/year and stays for 10 years. This customer's CLV before factoring in acquisition costs.", ans:"$2,000", dd:false },
+        { clue:"The supply chain flow from materials to end consumer — name all 5 links in order.", ans:"Supplier → Manufacturer → Distributor → Retailer → Customer", dd:false },
+        { clue:"The Bullwhip Effect: small consumer demand changes cause ___ swings in upstream inventory orders.", ans:"Larger and larger / amplified swings at each upstream tier", dd:false },
+        { clue:"Starbucks' app remembers your order, tracks purchases for rewards, and sends personalized offers. This type of system.", ans:"CRM — Customer Relationship Management", dd:false }
+      ],
+      // 600 pts
+      [
+        { clue:"The three CRM lifecycle phases: acquiring new customers, retaining existing ones, and this third phase.", ans:"Growing / expanding the relationship — upselling and cross-selling", dd:false },
+        { clue:"Amazon Prime members spend twice as much as non-Prime members. Prime is a CRM strategy designed to increase this metric by making switching costly.", ans:"CLV — Customer Lifetime Value", dd:true },
+        { clue:"Walmart pioneered sharing point-of-sale data directly with suppliers so they could manage Walmart's inventory levels automatically. This practice.", ans:"VMI — Vendor-Managed Inventory", dd:false },
+        { clue:"Toyota's JIT system means a single supplier disruption can halt the entire production line within hours. This JIT vulnerability.", ans:"Supply chain fragility / single point of failure / no safety stock buffer", dd:false },
+        { clue:"Target uses purchase data to predict customer life changes — like pregnancy — and sends targeted offers before competitors. The data technique.", ans:"Predictive analytics / data mining / customer behavior analysis", dd:false }
+      ],
+      // 800 pts
+      [
+        { clue:"Operational CRM handles day-to-day interactions. Analytical CRM mines data for patterns. This third type coordinates interactions across phone, web, email, and social.", ans:"Collaborative CRM", dd:false },
+        { clue:"A company spends $500 to acquire a customer who generates $200/year and stays only 2 years. Calculate net lifetime value.", ans:"$400 revenue − $500 acquisition cost = −$100 (negative — lost money on this customer)", dd:false },
+        { clue:"The key SCM metric measuring how many days it takes from placing an order with a supplier to receiving goods ready for sale.", ans:"Lead time", dd:true },
+        { clue:"The Bullwhip Effect is caused by information asymmetry — each tier orders extra as a buffer. The technology that most directly reduces it.", ans:"Sharing real-time POS data / EDI / supply chain visibility platforms / VMI", dd:false },
+        { clue:"Dell's build-to-order model: computers assembled only after a customer places an order — never building speculative inventory. JIT applied to ___.", ans:"Manufacturing / make-to-order production", dd:false }
+      ],
+      // 1000 pts
+      [
+        { clue:"Name the 3 types of CRM and give one specific business example of each in practice.", ans:"Operational (call center/sales force automation), Analytical (customer segmentation/CLV analysis), Collaborative (multi-channel customer coordination)", dd:false },
+        { clue:"Why is CLV more important than single-transaction revenue for acquisition decisions? Explain with a specific example.", ans:"CLV shows long-term value — a $50/month customer for 5 years ($3,000 CLV) justifies spending $500 to acquire; single transaction suggests spend no more than $50", dd:false },
+        { clue:"Explain the Bullwhip Effect analogy — why is it named that — and name 2 specific technologies that reduce it.", ans:"Like cracking a whip: small wrist motion creates huge tip motion. Each tier over-orders to buffer uncertainty. Reduced by: EDI, VMI, real-time POS data sharing", dd:false },
+        { clue:"COVID-19 exposed JIT fragility in 2 specific industries — name them and explain why JIT made them vulnerable.", ans:"Auto industry (chip shortage — no safety stock halted production), Healthcare (PPE stockout) — JIT eliminates buffers so any disruption immediately stops supply", dd:false },
+        { clue:"Amazon's supply chain beats competitors on 3 specific dimensions that others struggle to match — name all 3.", ans:"Speed (same-day/next-day delivery), Selection (millions of SKUs), Cost (warehouse automation reduces fulfillment cost)", dd:false }
+      ]
+    ]
   }
 };
 
@@ -630,7 +880,7 @@ const BOARDS = {
 
 const state = {
   board: 'w1',
-  used: { w1: {}, w2: {}, ch4: {}, ch6: {}, ch7: {} },
+  used: { w1: {}, w2: {}, w3: {}, ch4: {}, ch6: {}, ch7: {}, ch8: {}, ch9: {}, ch10: {}, ch11: {} },
   teams: [
     { name: 'Team 1', score: 0 },
     { name: 'Team 2', score: 0 },
@@ -823,7 +1073,7 @@ function fmtScore(n) {
 // ── BOARD SWITCH ──────────────────────────────────────────────────────────────
 
 function switchBoard(id, btn) {
-  ['w1','w2','ch4','ch6','ch7'].forEach(b => {
+  ['w1','w2','w3','ch4','ch6','ch7','ch8','ch9','ch10','ch11'].forEach(b => {
     document.getElementById(`board-${b}`).classList.toggle('hidden', b !== id);
   });
   document.querySelectorAll('.btab').forEach(t => t.classList.remove('active'));
@@ -842,16 +1092,16 @@ function resetTiles() {
 
 function resetAll() {
   if (!confirm('Reset ALL boards AND all team scores?')) return;
-  state.used = { w1:{}, w2:{}, ch4:{}, ch6:{}, ch7:{} };
+  state.used = { w1:{}, w2:{}, w3:{}, ch4:{}, ch6:{}, ch7:{}, ch8:{}, ch9:{}, ch10:{}, ch11:{} };
   state.teams.forEach((t,i) => { t.score = 0; });
-  ['w1','w2','ch4','ch6','ch7'].forEach(b => buildBoard(b));
+  ['w1','w2','w3','ch4','ch6','ch7','ch8','ch9','ch10','ch11'].forEach(b => buildBoard(b));
   buildScoreboard();
 }
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 
 buildScoreboard();
-['w1','w2','ch4','ch6','ch7'].forEach(b => buildBoard(b));
+['w1','w2','w3','ch4','ch6','ch7','ch8','ch9','ch10','ch11'].forEach(b => buildBoard(b));
 document.getElementById('board-sub').textContent = BOARDS['w1'].title;
 
 // Deep-link: ?board=ch4 auto-switches to that board
