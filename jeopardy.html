@@ -17,6 +17,7 @@
   --bad: #ef4444;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
+.hidden { display: none !important; }
 html,body { height:100%; }
 body {
   font-family: 'Arial Black', Arial, sans-serif;
@@ -153,7 +154,7 @@ header {
   gap: 4px;
   padding: 4px;
 }
-.board.hidden { display:none; }
+.board.hidden { display:none; }  /* covered by global .hidden rule above */
 
 .cat-hdr {
   background: var(--blue-mid);
