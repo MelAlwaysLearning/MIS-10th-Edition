@@ -74,9 +74,16 @@ header {
 }
 .team-name:focus { outline: 1px dashed rgba(255,215,0,.5); border-radius: 3px; }
 .team-score { font-size: 1.7rem; line-height: 1.1; }
-.t1 .team-score { color: #f87171; }
-.t2 .team-score { color: #4ade80; }
-.t3 .team-score { color: #fbbf24; }
+.t1  .team-score { color: #f87171; }
+.t2  .team-score { color: #4ade80; }
+.t3  .team-score { color: #fbbf24; }
+.t4  .team-score { color: #60a5fa; }
+.t5  .team-score { color: #e879f9; }
+.t6  .team-score { color: #34d399; }
+.t7  .team-score { color: #fb923c; }
+.t8  .team-score { color: #a78bfa; }
+.t9  .team-score { color: #f472b6; }
+.t10 .team-score { color: #94a3b8; }
 .score-btns { display:flex; gap:3px; justify-content:center; margin-top:4px; flex-wrap:wrap; }
 .sbtn {
   background: none;
@@ -292,9 +299,16 @@ header {
   letter-spacing: .05em;
 }
 .abtn:hover { opacity:.85; }
-.abtn.t1 { background:#ef4444; color:#fff; }
-.abtn.t2 { background:#22c55e; color:#fff; }
-.abtn.t3 { background:#f59e0b; color:#000; }
+.abtn.t1  { background:#ef4444; color:#fff; }
+.abtn.t2  { background:#22c55e; color:#fff; }
+.abtn.t3  { background:#f59e0b; color:#000; }
+.abtn.t4  { background:#3b82f6; color:#fff; }
+.abtn.t5  { background:#d946ef; color:#fff; }
+.abtn.t6  { background:#10b981; color:#fff; }
+.abtn.t7  { background:#f97316; color:#fff; }
+.abtn.t8  { background:#8b5cf6; color:#fff; }
+.abtn.t9  { background:#ec4899; color:#fff; }
+.abtn.t10 { background:#64748b; color:#fff; }
 
 /* ── DAILY DOUBLE ── */
 .dd-screen { text-align:center; max-width:600px; width:100%; }
@@ -883,9 +897,16 @@ const state = {
   board: 'w1',
   used: { w1: {}, w2: {}, w3: {}, ch4: {}, ch6: {}, ch7: {}, ch8: {}, ch9: {}, ch10: {}, ch11: {} },
   teams: [
-    { name: 'Team 1', score: 0 },
-    { name: 'Team 2', score: 0 },
-    { name: 'Team 3', score: 0 }
+    { name: 'Team 1',  score: 0 },
+    { name: 'Team 2',  score: 0 },
+    { name: 'Team 3',  score: 0 },
+    { name: 'Team 4',  score: 0 },
+    { name: 'Team 5',  score: 0 },
+    { name: 'Team 6',  score: 0 },
+    { name: 'Team 7',  score: 0 },
+    { name: 'Team 8',  score: 0 },
+    { name: 'Team 9',  score: 0 },
+    { name: 'Team 10', score: 0 }
   ],
   activeQ: null   // { boardId, row, col, pts }
 };
